@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TACTIK × Anthropic — The Brief That Accumulates</title>
+  <meta name="description" content="TACTIK's structured debrief layer running natively on Claude: tool_use, MCP, persistent operator model. The GPT generates. Claude generates and remembers.">
+  <style>
+    :root {
+      --bg: #090e1a;
+      --surface: #111827;
+      --surface2: #1e293b;
+      --border: #1e2d3d;
+      --accent: #3b82f6;
+      --anth: #e05c2e;
+      --anth-dim: rgba(224,92,46,0.15);
+      --anth-border: rgba(224,92,46,0.3);
+      --cyan: #06b6d4;
+      --text: #f1f5f9;
+      --muted: #7c8fa1;
+      --green: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(9,14,26,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+    }
+    .nav-logo { font-weight: 800; font-size: 0.85rem; letter-spacing: 0.12em; color: var(--text); text-decoration: none; }
+    .nav-badge {
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--anth); border: 1px solid var(--anth-border); padding: 4px 10px; border-radius: 4px;
+    }
+
+    /* MAIN */
+    main { max-width: 860px; margin: 0 auto; padding: 100px 24px 80px; }
+
+    /* PILL */
+    .pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--anth); border: 1px solid var(--anth-border); padding: 5px 12px; border-radius: 20px;
+      margin-bottom: 28px;
+    }
+    .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--anth); animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+    /* HERO */
+    h1 {
+      font-size: clamp(2rem, 5.5vw, 3.4rem);
+      font-weight: 800; line-height: 1.1; margin-bottom: 20px;
+    }
+    h1 em { font-style: normal; color: var(--anth); }
+    .hero-lead {
+      font-size: 1.05rem; color: var(--muted); max-width: 700px; margin-bottom: 36px;
+    }
+    .hero-lead strong { color: var(--text); }
+
+    /* META */
+    .meta {
+      display: flex; flex-wrap: wrap; gap: 28px;
+      padding: 20px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      margin-bottom: 64px;
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 3px; }
+    .meta-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); }
+    .meta-value { font-size: 0.82rem; font-weight: 500; color: var(--text); }
+    .live-dot {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.82rem; font-weight: 500; color: var(--green);
+    }
+    .live-dot::before {
+      content: ''; display: block; width: 7px; height: 7px;
+      border-radius: 50%; background: var(--green); animation: blink 2s infinite;
+    }
+
+    /* SECTIONS */
+    section { margin-bottom: 72px; }
+    .sec-tag {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 14px; }
+    h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+    p { color: var(--muted); margin-bottom: 14px; font-size: 0.9rem; }
+    p strong { color: var(--text); }
+
+    /* GRID */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 22px 0; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px;
+    }
+    .card.highlight {
+      border-color: var(--anth-border);
+      background: var(--anth-dim);
+    }
+    .card .icon { font-size: 1.3rem; margin-bottom: 10px; }
+    .card h3 { font-size: 0.85rem; }
+    .card p { font-size: 0.78rem; margin: 0; }
+    .card p.accent { color: var(--anth); }
+
+    /* FLOW */
+    .flow {
+      display: flex; align-items: center; overflow-x: auto;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px 24px; gap: 0; margin: 20px 0;
+    }
+    .fstep { display: flex; flex-direction: column; align-items: center; min-width: 90px; text-align: center; }
+    .fstep .fi {
+      width: 42px; height: 42px; border-radius: 8px;
+      background: var(--surface2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; margin-bottom: 7px;
+    }
+    .fstep .fi.anth { border-color: var(--anth-border); background: var(--anth-dim); }
+    .fstep .fl { font-size: 0.68rem; color: var(--muted); line-height: 1.3; }
+    .fstep .fs { font-size: 0.62rem; color: var(--anth); margin-top: 2px; }
+    .fstep .fs.blue { color: var(--cyan); }
+    .farr { color: var(--border); font-size: 1.1rem; padding: 0 8px; flex-shrink: 0; }
+
+    /* COMPARE TABLE */
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.83rem; }
+    th {
+      text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--border);
+      color: var(--muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { color: var(--text); font-weight: 500; }
+    td:nth-child(2) { color: var(--muted); }
+    td:nth-child(3) { color: var(--anth); }
+    .check { color: var(--green); }
+    .cross { color: #475569; }
+
+    /* QUOTE */
+    .quote {
+      border-left: 3px solid var(--anth);
+      padding: 14px 22px;
+      background: var(--anth-dim);
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    .quote p { font-size: 0.95rem; font-style: italic; color: var(--text); margin: 0; }
+    .quote .attr { font-size: 0.72rem; color: var(--muted); margin-top: 8px; font-style: normal; }
+
+    /* CODE BLOCK */
+    .code {
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: 8px; padding: 20px; font-family: 'Menlo','Monaco',monospace;
+      font-size: 0.75rem; color: var(--cyan); overflow-x: auto;
+      margin: 16px 0; line-height: 1.9;
+    }
+    .cc { color: var(--muted); }
+    .ck { color: var(--accent); }
+    .cs { color: var(--green); }
+    .ca { color: var(--anth); }
+
+    /* DELTA BOX */
+    .delta {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px 26px; margin: 20px 0;
+    }
+    .delta-label {
+      font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--muted); margin-bottom: 12px;
+    }
+    .delta-row {
+      display: flex; gap: 16px; align-items: flex-start; margin-bottom: 10px;
+    }
+    .delta-before {
+      flex: 1; font-size: 0.82rem; color: var(--muted);
+      padding: 10px 14px; background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border); border-radius: 6px;
+    }
+    .delta-after {
+      flex: 1; font-size: 0.82rem; color: var(--text);
+      padding: 10px 14px; background: var(--anth-dim);
+      border: 1px solid var(--anth-border); border-radius: 6px;
+    }
+    .delta-arrow { color: var(--anth); font-size: 1rem; padding-top: 9px; flex-shrink: 0; }
+
+    /* ASK CARD */
+    .ask-card {
+      background: var(--anth-dim);
+      border: 1px solid var(--anth-border);
+      border-radius: 12px; padding: 30px; margin: 22px 0;
+    }
+    .ask-card h3 {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--anth); margin-bottom: 20px;
+    }
+    .ask-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+    .ask-n {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--anth);
+      color: white; font-size: 0.65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+    }
+    .ask-t { font-size: 0.87rem; color: var(--text); line-height: 1.55; }
+    .ask-t strong { color: var(--text); }
+
+    /* MCP CARD */
+    .mcp-card {
+      background: var(--surface); border: 1px solid rgba(6,182,212,0.25);
+      border-radius: 10px; padding: 22px; margin: 16px 0;
+    }
+    .mcp-tag {
+      font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--cyan); background: rgba(6,182,212,0.08);
+      border: 1px solid rgba(6,182,212,0.2);
+      padding: 3px 8px; border-radius: 3px; display: inline-block; margin-bottom: 10px;
+    }
+    .mcp-card h3 { font-size: 0.9rem; }
+    .mcp-card p { font-size: 0.78rem; }
+
+    /* FOUNDER */
+    .founder {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 26px; display: flex; gap: 20px;
+    }
+    .f-avatar {
+      width: 52px; height: 52px; border-radius: 10px; background: var(--anth);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem; color: white; flex-shrink: 0;
+    }
+    .f-role { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; }
+    .f-link { font-size: 0.78rem; color: var(--anth); text-decoration: none; }
+    .f-link:hover { text-decoration: underline; }
+
+    /* CTA */
+    .cta {
+      text-align: center; padding: 60px 24px;
+      border-top: 1px solid var(--border); margin-top: 64px;
+    }
+    .cta h2 { font-size: 1.6rem; margin-bottom: 10px; }
+    .cta p { font-size: 0.95rem; margin-bottom: 28px; }
+    .btn {
+      display: inline-block; background: var(--anth); color: white;
+      text-decoration: none; padding: 13px 30px; border-radius: 8px;
+      font-weight: 600; font-size: 0.9rem; border: none; cursor: pointer;
+    }
+    .btn:hover { background: #c94e25; }
+    .btn-ghost {
+      display: inline-block; color: var(--muted); text-decoration: none;
+      padding: 13px 20px; font-size: 0.85rem; margin-left: 12px;
+    }
+    .btn-ghost:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      main { padding: 80px 16px 60px; }
+      .flow { gap: 6px; flex-wrap: wrap; justify-content: center; }
+      .farr { display: none; }
+      .founder { flex-direction: column; }
+      .delta-row { flex-direction: column; }
+      .delta-arrow { transform: rotate(90deg); align-self: center; }
+      h1 { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="https://tactikai.org" class="nav-logo">TACTIK AI</a>
+  <div style="display:flex; align-items:center; gap:20px;">
+    <a href="/briefs/" style="font-size:0.78rem; color:var(--muted); text-decoration:none;">← All Briefs</a>
+    <span class="nav-badge">Anthropic Ecosystem · Strategic Brief</span>
+  </div>
+</nav>
+
+<main>
+
+  <div class="pill"><span class="pill-dot"></span> Claude Ecosystem Partnership</div>
+
+  <h1>The brief that<br><em>accumulates.</em></h1>
+  <p class="hero-lead">
+    The GPT generates insights that evaporate. <strong>Claude generates insights that compound.</strong>
+    TACTIK's structured debrief layer running natively on Claude — with tool_use, MCP, and a persistent
+    operator model that updates after every session. This is what happens when the intelligence layer
+    has memory.
+  </p>
+
+  <div class="meta">
+    <div class="meta-item">
+      <span class="meta-label">From</span>
+      <span class="meta-value">Santiago Maspons · TACTIK</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Category</span>
+      <span class="meta-value">Anthropic / Claude Ecosystem</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Engine</span>
+      <span class="meta-value">Tactik Debrief API · Chaser 6.3</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Status</span>
+      <span class="live-dot">Live in production</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Date</span>
+      <span class="meta-value">June 2026</span>
+    </div>
+  </div>
+
+  <!-- 01 THE ONE STRUCTURAL DIFFERENCE -->
+  <section>
+    <div class="sec-tag">01 — The Structural Difference</div>
+    <h2>The GPT generates. Claude generates and remembers.</h2>
+    <p>
+      TACTIK's Debrief engine already runs in production on ChatGPT as a Custom Action.
+      It works: conversation in → POST to API → structured READOUT out → shareable link.
+      <strong>The READOUT quality is real. The problem is what happens next.</strong>
+    </p>
+
+    <div class="delta">
+      <div class="delta-label">What the GPT flow produces vs. what the Claude flow produces</div>
+      <div class="delta-row">
+        <div class="delta-before">
+          <strong style="color: var(--text); display:block; margin-bottom:6px;">GPT Custom Action</strong>
+          Session ends. READOUT generated. Public link created.<br><br>
+          Next session: starts cold. No memory of the previous debrief. The DNA extraction, the PCG scores, the Next Challenge — gone. The operator's model was never updated.
+        </div>
+        <div class="delta-arrow">→</div>
+        <div class="delta-after">
+          <strong style="color: var(--anth); display:block; margin-bottom:6px;">Claude + /brief skill</strong>
+          Session ends. READOUT generated. Public link created.<br><br>
+          Then: <code style="font-size:0.75rem; color: var(--cyan);">SANTIAGO-DNA.md</code> updated. SESSION LEDGER appended. Next session loads the accumulated model. The operator's DNA compounds across every conversation.
+        </div>
+      </div>
+    </div>
+
+    <div class="quote">
+      <p>"El modelo solo ve el estado acumulado, nunca los transcripts anteriores. Lo que importa es el delta, no el volumen."</p>
+      <div class="attr">— Belief Tracker principle · TACTIK architecture</div>
+    </div>
+
+    <p>
+      This is not a feature difference. It's an architectural one. Claude can write to disk.
+      <strong>That single capability turns a debrief from a document into a compounding model.</strong>
+    </p>
+  </section>
+
+  <!-- 02 THE B MODE -->
+  <section>
+    <div class="sec-tag">02 — The B Mode</div>
+    <h2>One keystroke. Any conversation. Structured debrief + operator model update.</h2>
+    <p>
+      The B mode is not a new product. It's a key. Type <code style="font-size:0.82rem; color: var(--cyan); background: #0d1117; padding: 2px 7px; border-radius: 4px;">/brief</code>
+      at the end of any conversation in Claude Code — and the system:
+    </p>
+
+    <div class="flow">
+      <div class="fstep">
+        <div class="fi">💬</div>
+        <div class="fl">Any conversation</div>
+        <div class="fs blue">Claude / Claude Code</div>
+      </div>
+      <div class="farr">→</div>
+      <div class="fstep">
+        <div class="fi anth">⌨️</div>
+        <div class="fl"><code style="font-size:0.75rem">/brief</code></div>
+        <div class="fs">One keystroke</div>
+      </div>
+      <div class="farr">→</div>
+      <div class="fstep">
+        <div class="fi">🧬</div>
+        <div class="fl">Reads DNA</div>
+        <div class="fs blue">SANTIAGO-DNA.md</div>
+      </div>
+      <div class="farr">→</div>
+      <div class="fstep">
+        <div class="fi">📡</div>
+        <div class="fl">Calls API</div>
+        <div class="fs blue">/api/public/debrief</div>
+      </div>
+      <div class="farr">→</div>
+      <div class="fstep">
+        <div class="fi anth">📊</div>
+        <div class="fl">READOUT</div>
+        <div class="fs">PCG · DNA · Risks</div>
+      </div>
+      <div class="farr">→</div>
+      <div class="fstep">
+        <div class="fi anth">✍️</div>
+        <div class="fl">Updates model</div>
+        <div class="fs">Appends SESSION LEDGER</div>
+      </div>
+    </div>
+
+    <p>
+      The READOUT is the same one the GPT produces: Decision Intelligence %, PCG formula with weights,
+      Evidence Anchoring, Your Next Challenge, Risks. <strong>What's new is the final step: the model
+      of the operator updates, and the next session starts with that context already loaded.</strong>
+    </p>
+  </section>
+
+  <!-- 03 WHAT THE READOUT CONTAINS -->
+  <section>
+    <div class="sec-tag">03 — The READOUT</div>
+    <h2>What the engine returns. Every time. On any surface.</h2>
+    <p>
+      The Tactik Debrief engine (live at <strong>tactik-debrief-buddy.lovable.app</strong>) returns a
+      structured READOUT callable from any LLM interface. Already in production via ChatGPT Custom Action.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>Decision Intelligence</h3>
+        <p>Weighted score: Objective Alignment (25%), Evidence Density (20%), Counterpart Receptivity (20%), Strategic Coherence (20%), Residual Risk (15% inverse).</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧬</div>
+        <h3>Cognitive DNA</h3>
+        <p>Fear-Based Triggers, Leverage Points, Deal Breakers, Rapport Strategies, Optimal Approach, Objection Handling. Operational before a negotiation — not decorative after.</p>
+      </div>
+      <div class="card highlight">
+        <div class="icon">📈</div>
+        <h3>PCG Scores</h3>
+        <p class="accent">F1 Initiative · F2 Depth · F3 Advance · F4 Coherence · F5 inv. Dependency. Calibrated bands: 0-29 critical to 85-100 strong.</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚠️</div>
+        <h3>Risks Identified</h3>
+        <p>MEDIUM / LOW / HIGH tagged risks with specific descriptions. Not generic warnings — grounded in the actual transcript.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔭</div>
+        <h3>Drift Detector</h3>
+        <p>MDD-L: groundedness score 0-100. Flags when reasoning drifts from evidence. The audit layer.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔗</div>
+        <h3>Public Artifact</h3>
+        <p>Every debrief gets a permanent URL. Shareable, archivable, loadable into the next context window without reprocessing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 THE API -->
+  <section>
+    <div class="sec-tag">04 — The Live API</div>
+    <h2>Callable from Claude today. No new infrastructure needed.</h2>
+    <p>
+      The same endpoint the ChatGPT Action calls is callable from Claude's tool_use
+      with no modification to the API. The engine is provider-agnostic.
+    </p>
+
+    <div class="code">
+<span class="cc"># Claude tool_use → Tactik Debrief API</span>
+<span class="ca">POST</span> https://tactik-debrief-buddy.lovable.app<span class="cs">/api/public/debrief</span>
+<span class="ck">X-Tactik-Key:</span> {api_key}
+<span class="ck">Content-Type:</span> application/json
+
+{
+  <span class="cs">"transcript"</span>: <span class="cc">"{conversation | document | chat_export}"</span>,
+  <span class="cs">"input_type"</span>: <span class="cc">"conversation | document | chat | research | mixed"</span>,
+  <span class="cs">"subject_hint"</span>: <span class="cc">"Person, company, deal, or topic being analyzed"</span>,
+  <span class="cs">"vertical"</span>: <span class="cc">"negotiation | diplomacy | education | legal | agro"</span>,
+  <span class="cs">"source"</span>: <span class="ca">"claude"</span>,
+  <span class="cs">"objective"</span>: <span class="cc">"What the operator wants to achieve next"</span>
+}
+
+<span class="cc">→ Returns: { markdown, dna, pcg, success_probability, url, id, public_token }</span>
+    </div>
+
+    <p>
+      The <code style="font-size:0.8rem; color:var(--cyan)">source: "claude"</code> flag tells the engine
+      the caller is Claude — enabling Claude-specific rendering and the file-write accumulation path.
+      <strong>The GPT sets <code style="font-size:0.8rem; color:var(--cyan)">source: "gpt"</code>.
+      Claude sets <code style="font-size:0.8rem; color:var(--anth)">source: "claude"</code> and also
+      writes the result back to the operator model.</strong>
+    </p>
+  </section>
+
+  <!-- 05 THE MCP PATH -->
+  <section>
+    <div class="sec-tag">05 — The MCP Path</div>
+    <h2>One MCP server. Every Claude surface. Zero context switching.</h2>
+    <p>
+      The next step beyond Claude Code is an MCP server — <code style="font-size:0.8rem; color:var(--cyan)">mcp-tactik-debrief</code> —
+      that exposes the full TACTIK debrief engine as a native tool callable from any Claude client:
+      Claude Desktop, Claude.ai, Claude API, Claude Code.
+    </p>
+
+    <div class="mcp-card">
+      <div class="mcp-tag">MCP Tool · generate_debrief</div>
+      <h3>generate_debrief(transcript, subject, vertical, objective)</h3>
+      <p>Returns the full TACTIK READOUT: Decision Intelligence %, DNA extraction, PCG scores, Risks, Your Next Challenge. Updates operator model if session context is active.</p>
+    </div>
+
+    <div class="mcp-card">
+      <div class="mcp-tag">MCP Tool · get_operator_dna</div>
+      <h3>get_operator_dna(operator_id)</h3>
+      <p>Loads the accumulated Cognitive DNA of the operator — Layer 1 through Layer 9, SESSION LEDGER, active context — so any Claude session starts with full context, not zero.</p>
+    </div>
+
+    <div class="mcp-card">
+      <div class="mcp-tag">MCP Tool · update_operator_model</div>
+      <h3>update_operator_model(session_delta, key_insight, open_questions)</h3>
+      <p>Appends a SESSION LEDGER entry to the operator model. The compounding mechanism. Called automatically by /brief; callable manually by any Claude session that produces a key insight.</p>
+    </div>
+
+    <p>
+      TACTIK already has a production MCP server (<code style="font-size:0.8rem; color:var(--cyan)">mcp.tactikai.org</code>)
+      serving institutional simulation tools. <strong>The debrief MCP is the same architecture, same server,
+      new tool set.</strong> Build time: one sprint.
+    </p>
+  </section>
+
+  <!-- 06 COMPARISON -->
+  <section>
+    <div class="sec-tag">06 — The Comparison</div>
+    <h2>What Claude has that GPT doesn't.</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>GPT Custom Action</th>
+          <th>Claude + TACTIK</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Generates READOUT</td>
+          <td><span class="check">✓</span> Via Action → API</td>
+          <td><span class="check">✓</span> Via tool_use → same API</td>
+        </tr>
+        <tr>
+          <td>DNA extraction inline</td>
+          <td><span class="check">✓</span> In ChatGPT response</td>
+          <td><span class="check">✓</span> In Claude response</td>
+        </tr>
+        <tr>
+          <td>Public debrief URL</td>
+          <td><span class="check">✓</span> Permanent link</td>
+          <td><span class="check">✓</span> Same permanent link</td>
+        </tr>
+        <tr>
+          <td>Persistent operator model</td>
+          <td><span class="cross">✗</span> Stateless</td>
+          <td><span class="check" style="color:var(--anth)">✓</span> SANTIAGO-DNA.md updated</td>
+        </tr>
+        <tr>
+          <td>Session-to-session accumulation</td>
+          <td><span class="cross">✗</span> Starts cold every time</td>
+          <td><span class="check" style="color:var(--anth)">✓</span> SESSION LEDGER appended</td>
+        </tr>
+        <tr>
+          <td>Invocable with /brief keystroke</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check" style="color:var(--anth)">✓</span> Already built</td>
+        </tr>
+        <tr>
+          <td>MCP native</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check" style="color:var(--anth)">✓</span> mcp-tactik-debrief (next sprint)</td>
+        </tr>
+        <tr>
+          <td>Extended thinking on debrief</td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check" style="color:var(--anth)">✓</span> Claude native</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="quote">
+      <p>"The GPT is a generation engine. Claude is a compounding intelligence layer. Same API. Different architecture. Completely different trajectory."</p>
+    </div>
+  </section>
+
+  <!-- 07 WHAT'S LIVE TODAY -->
+  <section>
+    <div class="sec-tag">07 — Production State</div>
+    <h2>What's live right now. No vaporware.</h2>
+
+    <div class="grid">
+      <div class="card highlight">
+        <div class="icon">✅</div>
+        <h3>Tactik Debrief API</h3>
+        <p class="accent">Live at tactik-debrief-buddy.lovable.app · PCG v1.2 · DNA v1.8 · Callable today.</p>
+      </div>
+      <div class="card highlight">
+        <div class="icon">✅</div>
+        <h3>/brief skill</h3>
+        <p class="accent">Installed in Claude Code · Reads DNA · Generates READOUT · Updates model · Commits.</p>
+      </div>
+      <div class="card highlight">
+        <div class="icon">✅</div>
+        <h3>SANTIAGO-DNA.md</h3>
+        <p class="accent">9-layer operator model · SESSION LEDGER · Append-only · Already accumulating.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏗️</div>
+        <h3>mcp-tactik-debrief</h3>
+        <p>Next sprint. Same mcp.tactikai.org server. Exposes generate_debrief, get_operator_dna, update_operator_model.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏗️</div>
+        <h3>Claude Project config</h3>
+        <p>System prompt with full TACTIK READOUT instructions + DNA format + PCG formula. The GPT equivalent for Claude.ai.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏗️</div>
+        <h3>Supabase belief_events</h3>
+        <p>Persistence layer beyond the file. Every session delta written to the belief tracker ledger in production DB.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 THE ASK -->
+  <section>
+    <div class="sec-tag">08 — The Ask</div>
+    <h2>Three things that make this a first-class Anthropic integration.</h2>
+
+    <div class="ask-card">
+      <h3>The Ask — 45 Minutes</h3>
+      <div class="ask-item">
+        <div class="ask-n">1</div>
+        <div class="ask-t">
+          <strong>API credits via Claude for Startups or AWS Bedrock partnership.</strong>
+          The debrief engine runs on the caller's model. Claude's extended thinking produces
+          measurably richer DNA extractions than GPT-5.5. We want to run production traffic on
+          Claude — and we need the credits to do it at scale before revenue covers it.
+        </div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-n">2</div>
+        <div class="ask-t">
+          <strong>Early access to Claude Projects API</strong> — persistent memory across sessions
+          without file writes. The SANTIAGO-DNA.md approach works. The Projects API would make
+          it native to claude.ai and the mobile experience where file writes aren't possible.
+          TACTIK is the exact use-case the Projects API was designed for.
+        </div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-n">3</div>
+        <div class="ask-t">
+          <strong>Listing in the Claude integrations directory</strong> alongside Replit, Linear,
+          and Sentry. The MCP server is one sprint away. The use-case is differentiated:
+          Decision Rehearsal Infrastructure — the category no AI assistant currently owns.
+          45 minutes to demo the production endpoint. You tell us whether this belongs in Claude.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 FOUNDER -->
+  <section>
+    <div class="sec-tag">09 — Who Built This</div>
+    <h2>40 years making irreversible decisions. 2 months building the tool.</h2>
+    <div class="founder">
+      <div class="f-avatar">SM</div>
+      <div>
+        <h3>Santiago Maspons</h3>
+        <div class="f-role">Founder &amp; CEO, TACTIK AI · tactikai.org</div>
+        <p>
+          40 years as an operator in agro-export and mining across Latin America — four decades
+          making consequential decisions with incomplete information, adversarial counterparties,
+          and real political cost. Built TACTIK entirely on a mobile device in under 2 months.
+          <strong>This is the tool I always wished I'd had. The Brief system is what I
+          realized had the real IP.</strong>
+        </p>
+        <p style="margin-top:8px;">
+          The debrief you're reading was generated by the system it describes.
+          This document exists because <code style="font-size:0.8rem; color:var(--cyan)">/brief</code> was run
+          at the end of a session — and it's already in the SESSION LEDGER.
+        </p>
+        <a href="https://www.linkedin.com/in/santiago-maspons-77798166" class="f-link">LinkedIn →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta">
+    <h2>The GPT generates. Claude generates and remembers.</h2>
+    <p>45 minutes to see why the difference is architectural, not cosmetic.</p>
+    <a href="mailto:smaspons65@gmail.com?subject=TACTIK%20%C3%97%20Anthropic%20%E2%80%94%2045%20min%20demo" class="btn">
+      Request 45 minutes →
+    </a>
+    <a href="https://tactikai.org/briefs/" class="btn-ghost">See all briefs</a>
+  </div>
+
+</main>
+</body>
+</html>

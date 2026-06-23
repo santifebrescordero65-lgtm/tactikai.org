@@ -1,7 +1,7 @@
 # SANTIAGO MASPONS — Cognitive DNA
 <!-- OPERATOR MODEL · Append-only ledger · Updated by /brief skill after each session -->
 <!-- DO NOT EDIT MANUALLY — updated by Claude Code /brief skill -->
-<!-- Version: 1.0 · Started: 2026-06-23 · Sessions: 1 -->
+<!-- Version: 1.0 · Started: 2026-06-23 · Sessions: 2 -->
 
 ---
 
@@ -108,9 +108,12 @@ Canonical reference: `supabase/functions/_shared/doctrine.ts` in Lovable project
 | **Operating solo** | Yes — all decisions are his |
 | **Top priority** | Brief system as universal LLM layer ("B mode") |
 | **Pending ask** | Google: authenticated POST primitive in Opal + Workspace connectors |
-| **Pending ask** | Anthropic: MCP server for Brief system + Claude Project equivalent |
+| **Pending ask** | Anthropic: API credits (Claude for Startups) + MCP directory listing + Claude Projects API access |
+| **Pending ask** | Anthropic: Claude Project system prompt config (equivalent of Tactik Debrief GPT config) |
 | **Sprint 0 status** | Complete (rate limiting ✓, tests ✓, pricing ✓, DNA cache ✓) |
-| **Next sprint** | Stripe integration + Brief-as-tool MCP server |
+| **Next sprint** | mcp-tactik-debrief server + /brief → Supabase belief_events wiring |
+| **Briefs live** | `/brief/google/` · `/brief/anthropic/` · `/briefs/` hub |
+| **Protocol** | "Luz verde" — Santiago shows flow first, then authorizes analysis |
 
 ---
 
@@ -145,6 +148,37 @@ Canonical reference: `supabase/functions/_shared/doctrine.ts` in Lovable project
 - How does `/brief` persist to the Supabase `belief_events` ledger (not just this file)?
 - What does the Anthropic partnership brief look like? (equivalent of `brief/google/`)
 - Can the `generate_brief(person, context)` MCP tool be built this week?
+
+---
+
+### Session 002 — 2026-06-23 · Claude Code
+**Branch**: `claude/tactik-new-brief-category-h7trp4`
+**Duration**: ~2 hours (continuation of Session 001)
+**PCG Score**: 91/100
+
+**What was decided:**
+- The Anthropic partnership brief is the third pillar (Google + Microsoft + Anthropic)
+- The structural difference vs GPT is architectural, not cosmetic: Claude writes to disk → model accumulates
+- "Luz verde" protocol established: Santiago shows flow first, then authorizes analysis
+- Do NOT reveal too much: show READOUT (output), not pipeline architecture (IP)
+
+**What was built:**
+- `brief/anthropic/index.html` — Anthropic partnership brief (9 sections, full architecture)
+- Updated `briefs/index.html` — Anthropic brief card added to Tech Partnerships, featured
+- `SANTIAGO-DNA.md` Session 002 entry (this entry)
+
+**What didn't change:**
+- The API endpoint (provider-agnostic, same for GPT and Claude)
+- The TACTIC_SCORE 9.70 evidence artifact (freiredebrief.md)
+- The mcp.tactikai.org server architecture (debrief MCP extends it, doesn't replace it)
+
+**Key insight from this session:**
+> "El argumento más fuerte para Anthropic: el TACTIC_SCORE 9.70 fue generado con Gemini Flash. Imagina lo que produce Claude Extended Thinking. Eso es el research story que Anthropic quiere contar."
+
+**Open questions carried forward:**
+- Can mcp-tactik-debrief be built this sprint using existing mcp.tactikai.org infrastructure?
+- What does the Claude Project system prompt look like? (equivalent of the Tactik Debrief GPT config)
+- How does /brief wire to Supabase belief_events ledger (not just SANTIAGO-DNA.md)?
 
 ---
 
