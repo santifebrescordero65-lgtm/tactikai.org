@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TACTIK AI — LinkedIn Launch Project</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --ink: #0f172a;
+      --ink2: #1e293b;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --cyan: #0891b2;
+      --green: #059669;
+      --green-light: #ecfdf5;
+      --orange: #ea580c;
+      --orange-light: #fff7ed;
+      --surface: #f8fafc;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* PRINT */
+    @media print {
+      body { background: white; font-size: 12px; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none; }
+      nav { display: none; }
+      main { padding: 0; }
+      .cover { height: 100vh; }
+    }
+
+    /* NAV (screen only) */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: white; border-bottom: 1px solid var(--border);
+      height: 52px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+    }
+    .nav-logo { font-weight: 800; font-size: 0.82rem; letter-spacing: 0.12em; color: var(--ink); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-print {
+      background: var(--accent); color: white; border: none;
+      padding: 7px 16px; border-radius: 6px; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+    }
+    .btn-print:hover { background: #1d4ed8; }
+    .nav-date { font-size: 0.72rem; color: var(--muted); }
+
+    /* MAIN */
+    main { max-width: 900px; margin: 0 auto; padding: 72px 32px 80px; }
+
+    /* COVER */
+    .cover {
+      background: var(--ink); color: white;
+      border-radius: 16px; padding: 64px 56px;
+      margin-bottom: 48px; position: relative; overflow: hidden;
+    }
+    .cover::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: rgba(37,99,235,0.15);
+    }
+    .cover-tag {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      color: #60a5fa; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cover-tag::before {
+      content: ''; width: 20px; height: 2px; background: #60a5fa;
+    }
+    .cover h1 {
+      font-size: 2.8rem; font-weight: 900; line-height: 1.05;
+      margin-bottom: 20px; letter-spacing: -0.02em;
+    }
+    .cover h1 span { color: #60a5fa; }
+    .cover-sub {
+      font-size: 1.05rem; color: #94a3b8; max-width: 520px;
+      margin-bottom: 48px; line-height: 1.65;
+    }
+    .cover-meta {
+      display: flex; gap: 40px; flex-wrap: wrap;
+      border-top: 1px solid rgba(255,255,255,0.1); padding-top: 28px;
+    }
+    .cover-meta-item {}
+    .cover-meta-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: #64748b; margin-bottom: 4px; }
+    .cover-meta-value { font-size: 0.88rem; font-weight: 600; color: white; }
+    .cover-meta-value.live { color: #34d399; }
+
+    /* SECTION */
+    .section { margin-bottom: 56px; }
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px; padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-num {
+      width: 28px; height: 28px; border-radius: 6px; background: var(--accent);
+      color: white; font-size: 0.72rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .section-title { font-size: 1.25rem; font-weight: 800; color: var(--ink); }
+    .section-sub { font-size: 0.78rem; color: var(--muted); margin-left: auto; }
+
+    h2 { font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; margin-top: 20px; }
+    p { font-size: 0.87rem; color: var(--muted); margin-bottom: 10px; line-height: 1.65; }
+    p strong { color: var(--ink); }
+
+    /* CALLOUT BOXES */
+    .callout {
+      border-radius: 10px; padding: 18px 22px; margin: 16px 0;
+    }
+    .callout.blue { background: var(--accent-light); border-left: 3px solid var(--accent); }
+    .callout.green { background: var(--green-light); border-left: 3px solid var(--green); }
+    .callout.orange { background: var(--orange-light); border-left: 3px solid var(--orange); }
+    .callout.dark { background: var(--ink); color: white; border-left: none; }
+    .callout-label {
+      font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em;
+      font-weight: 700; margin-bottom: 6px;
+    }
+    .callout.blue .callout-label { color: var(--accent); }
+    .callout.green .callout-label { color: var(--green); }
+    .callout.orange .callout-label { color: var(--orange); }
+    .callout.dark .callout-label { color: #60a5fa; }
+    .callout p { margin: 0; font-size: 0.88rem; }
+    .callout.blue p { color: var(--ink2); }
+    .callout.dark p { color: #cbd5e1; }
+    .callout-big {
+      font-size: 1.3rem; font-weight: 800; color: var(--ink);
+      line-height: 1.3; margin-top: 4px;
+    }
+    .callout.dark .callout-big { color: white; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 16px 0; }
+
+    /* CARD */
+    .card {
+      background: white; border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px;
+    }
+    .card.accent { border-color: rgba(37,99,235,0.3); background: var(--accent-light); }
+    .card.green { border-color: rgba(5,150,105,0.3); background: var(--green-light); }
+    .card-icon { font-size: 1.3rem; margin-bottom: 8px; }
+    .card-title { font-size: 0.85rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .card-desc { font-size: 0.76rem; color: var(--muted); line-height: 1.5; }
+    .card-num { font-size: 1.8rem; font-weight: 900; color: var(--accent); }
+    .card-num.green { color: var(--green); }
+
+    /* STAT ROW */
+    .stat-row {
+      display: flex; gap: 0;
+      background: white; border: 1px solid var(--border); border-radius: 10px;
+      overflow: hidden; margin: 16px 0;
+    }
+    .stat {
+      flex: 1; padding: 18px 20px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-value { font-size: 1.6rem; font-weight: 900; color: var(--accent); }
+    .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 2px; }
+
+    /* TABLE */
+    table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.82rem; }
+    th {
+      text-align: left; padding: 9px 14px;
+      background: var(--surface); border-bottom: 2px solid var(--border);
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+    }
+    td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    td:first-child { font-weight: 600; color: var(--ink); }
+    .tag {
+      display: inline-block; font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 2px 8px; border-radius: 3px;
+    }
+    .tag.blue { color: var(--accent); background: var(--accent-light); }
+    .tag.green { color: var(--green); background: var(--green-light); }
+    .tag.orange { color: var(--orange); background: var(--orange-light); }
+    .tag.gray { color: var(--muted); background: var(--surface); border: 1px solid var(--border); }
+
+    /* SLIDE PREVIEW */
+    .slides { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+    .slide {
+      background: white; border: 1px solid var(--border); border-radius: 10px;
+      display: flex; gap: 0; overflow: hidden;
+    }
+    .slide-num {
+      width: 48px; background: var(--ink); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
+    }
+    .slide-content { padding: 14px 18px; flex: 1; }
+    .slide-title { font-size: 0.85rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .slide-copy { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .slide-image { font-size: 0.7rem; color: var(--cyan); margin-top: 6px; font-weight: 600; }
+
+    /* POST COPY BOX */
+    .post-copy {
+      background: var(--ink); color: #e2e8f0;
+      border-radius: 10px; padding: 24px 26px; margin: 16px 0;
+      font-size: 0.82rem; line-height: 1.85;
+      white-space: pre-line;
+    }
+    .post-copy .line-break { display: block; height: 8px; }
+
+    /* CHECKLIST */
+    .checklist { list-style: none; margin: 14px 0; }
+    .checklist li {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.83rem; color: var(--muted);
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before {
+      content: '☐'; color: var(--accent); font-size: 1rem; flex-shrink: 0; margin-top: -1px;
+    }
+    .checklist li strong { color: var(--ink); }
+
+    /* TIMELINE */
+    .timeline { margin: 16px 0; }
+    .tl-item { display: flex; gap: 16px; padding-bottom: 20px; position: relative; }
+    .tl-item:not(:last-child)::before {
+      content: ''; position: absolute; left: 14px; top: 28px; bottom: 0;
+      width: 2px; background: var(--border);
+    }
+    .tl-dot {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--accent);
+      color: white; font-size: 0.65rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .tl-dot.gray { background: var(--border); color: var(--muted); }
+    .tl-body {}
+    .tl-title { font-size: 0.9rem; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .tl-when { font-size: 0.7rem; color: var(--muted); margin-bottom: 6px; }
+    .tl-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+
+    /* QUOTE */
+    .quote {
+      border-left: 3px solid var(--accent); padding: 14px 20px;
+      background: var(--accent-light); border-radius: 0 8px 8px 0; margin: 16px 0;
+    }
+    .quote p { font-size: 0.95rem; font-style: italic; color: var(--ink2); margin: 0; font-weight: 500; }
+    .quote-attr { font-size: 0.7rem; color: var(--muted); margin-top: 6px; }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* URL ROW */
+    .url-row {
+      background: var(--ink2); color: #e2e8f0;
+      border-radius: 8px; padding: 10px 16px; margin: 8px 0;
+      font-family: 'Courier New', monospace; font-size: 0.78rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .url-label { font-size: 0.6rem; text-transform: uppercase; color: #60a5fa; flex-shrink: 0; }
+
+    /* FOOTER */
+    .footer {
+      text-align: center; padding: 32px; color: var(--muted2);
+      font-size: 0.72rem; border-top: 1px solid var(--border); margin-top: 48px;
+    }
+
+    @media (max-width: 640px) {
+      main { padding: 64px 16px 60px; }
+      nav { padding: 0 16px; }
+      .cover { padding: 40px 28px; }
+      .cover h1 { font-size: 2rem; }
+      .two-col, .three-col { grid-template-columns: 1fr; }
+      .stat-row { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="no-print">
+  <span class="nav-logo">TACTIK AI</span>
+  <div class="nav-actions">
+    <span class="nav-date">Junio 2026</span>
+    <button class="btn-print" onclick="window.print()">Exportar PDF</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-tag">TACTIK AI · Proyecto de Lanzamiento</div>
+    <h1>LinkedIn Launch<br><span>Callable Judgment<br>Infrastructure</span></h1>
+    <p class="cover-sub">
+      Plan completo de lanzamiento al mercado a través de LinkedIn —
+      posicionamiento, posts, carousel, stress tests, y ruta de comercialización.
+      Junio 2026.
+    </p>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Fundador</div>
+        <div class="cover-meta-value">Santiago Maspons</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Producto</div>
+        <div class="cover-meta-value">TACTIK AI · Tactik Debrief GPT</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Estado</div>
+        <div class="cover-meta-value live">En producción</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">Schema</div>
+        <div class="cover-meta-value">PCG v1.2 · DNA v1.8</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">IP Registrada</div>
+        <div class="cover-meta-value">Mayo 31, 2025</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: LA CATEGORÍA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title">La Categoría que Declaramos</div>
+      <div class="section-sub">El territorio que nadie ha nombrado todavía</div>
+    </div>
+
+    <div class="callout dark">
+      <div class="callout-label">La bandera</div>
+      <div class="callout-big">AI can answer.<br>TACTIK preserves judgment.</div>
+    </div>
+
+    <div class="two-col" style="margin-top: 20px;">
+      <div>
+        <h2>Lo que existe hoy</h2>
+        <p>Toda superficie de trabajo se está convirtiendo en una superficie de IA. Los modelos responden. Los asistentes resumen. Los agentes ejecutan.</p>
+        <p><strong>Nadie preserva el juicio detrás de la acción.</strong></p>
+        <p>¿Qué evidencia soportó la decisión? ¿Qué contradicción quedó sin resolver? ¿Quién va a presionar la posición? ¿Cuál es el movimiento antes del movimiento real?</p>
+      </div>
+      <div>
+        <h2>Lo que TACTIK declara</h2>
+        <p><strong>Callable Judgment Infrastructure:</strong> una capa que puede ser invocada desde cualquier superficie de alto valor para producir un READOUT auditable de criterio.</p>
+        <p>No es un chatbot. No es un resumen. Es el registro estructurado de qué tan bien se razonó — y qué viene después.</p>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 24px;">Las superficies donde vive el juicio</h2>
+    <div class="three-col">
+      <div class="card">
+        <div class="card-icon">💬</div>
+        <div class="card-title">Conversaciones</div>
+        <div class="card-desc">Chats con IA, diálogos estratégicos, sesiones de debate, consultas ejecutivas.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📧</div>
+        <div class="card-title">Documentos y correos</div>
+        <div class="card-desc">Email threads, documentos de Google Docs, PDFs, research notes, notas de reunión.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎙️</div>
+        <div class="card-title">Reuniones y workflows</div>
+        <div class="card-desc">Transcripciones de Meet, Teams, Zoom. Outputs de agentes IA. Interacciones de alto riesgo.</div>
+      </div>
+    </div>
+
+    <div class="callout blue" style="margin-top: 20px;">
+      <div class="callout-label">Regla de posicionamiento</div>
+      <p><strong>No nombrar Google, Microsoft, Teams, Gmail en el día 1.</strong> En el lanzamiento declaramos la categoría. Después mostramos las superficies. Primero la bandera, luego las integraciones.</p>
+    </div>
+  </div>
+
+  <hr class="divider page-break">
+
+  <!-- SECTION 2: AUDIENCIA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title">La Audiencia en LinkedIn</div>
+      <div class="section-sub">Datos reales · Año completo jun 2025 → jun 2026</div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-value">127K</div>
+        <div class="stat-label">Impresiones / año</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">59,978</div>
+        <div class="stat-label">Personas alcanzadas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">1,747</div>
+        <div class="stat-label">Seguidores actuales</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">3,671</div>
+        <div class="stat-label">Impresiones en 2 días (jun 17-18)</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h2>Demografía por empresa</h2>
+        <table>
+          <thead><tr><th>Empresa</th><th>%</th><th>Relevancia</th></tr></thead>
+          <tbody>
+            <tr><td>Google</td><td>2%</td><td><span class="tag blue">Target directo</span></td></tr>
+            <tr><td>Microsoft</td><td>&lt;1%</td><td><span class="tag blue">Pegasus pipeline</span></td></tr>
+            <tr><td>LinkedIn</td><td>&lt;1%</td><td><span class="tag green">Plataforma activa</span></td></tr>
+            <tr><td>MIT Sloan</td><td>&lt;1%</td><td><span class="tag green">Validación académica</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h2>Demografía por ubicación</h2>
+        <table>
+          <thead><tr><th>Ciudad</th><th>%</th></tr></thead>
+          <tbody>
+            <tr><td>Miami-Fort Lauderdale</td><td>8%</td></tr>
+            <tr><td>Guayaquil</td><td>7%</td></tr>
+            <tr><td>Guayaquil Metro</td><td>5%</td></tr>
+            <tr><td>New York Metro</td><td>4%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout green">
+      <div class="callout-label">Insight clave</div>
+      <p><strong>La audiencia es correcta — no la cantidad.</strong> Google y Microsoft presentes. Miami y Guayaquil como bases. El problema no es a quién llegas. El problema es que hasta ahora les contaste lo que construyes. Este post les muestra.</p>
+    </div>
+
+    <h2 style="margin-top: 20px;">El filtro natural del GPT</h2>
+    <p>Al usar el GPT como entry point, solo entran personas con cuenta de ChatGPT. Eso no es una limitación — es un filtro de calificación. La persona que se toma el tiempo de probar un GPT en una herramienta de pago ya es un usuario más serio que el 95% de los que hacen clic en links.</p>
+
+    <div class="callout orange">
+      <div class="callout-label">Expectativa realista</div>
+      <p><strong>3 a 7 DMs serios.</strong> No 500 seguidores nuevos. Las 3 a 7 personas que escriban después de ver el READOUT son el pipeline real. Una de esas es un piloto.</p>
+    </div>
+  </div>
+
+  <hr class="divider page-break">
+
+  <!-- SECTION 3: POST #1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title">Post #1 — El Demo</div>
+      <div class="section-sub">Publicar esta semana · Carousel de 8 slides</div>
+    </div>
+
+    <div class="two-col">
+      <div class="card green">
+        <div class="card-title">Objetivo</div>
+        <div class="card-desc">Que la gente LO PRUEBE. No que entienda la arquitectura. Mostrar el flujo real con las capturas reales. Invitar a hacer clic en el GPT.</div>
+      </div>
+      <div class="card accent">
+        <div class="card-title">Formato</div>
+        <div class="card-desc">Carousel LinkedIn de 8 slides. No video. No solo texto. Las imágenes del flujo real son la prueba — ningún competidor las tiene.</div>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 20px;">Las 8 slides — orden y contenido</h2>
+    <div class="slides">
+      <div class="slide">
+        <div class="slide-num">1</div>
+        <div class="slide-content">
+          <div class="slide-title">COVER — El hook</div>
+          <div class="slide-copy">Texto: "Llevo meses hablando de lo que hace TACTIK. Hoy te lo muestro en 60 segundos. Desliza →"<br>Fondo oscuro TACTIK. Logo. Sin más texto.</div>
+          <div class="slide-image">→ Crear slide de texto. Fondo #090e1a. Letra blanca.</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-num">2</div>
+        <div class="slide-content">
+          <div class="slide-title">El READOUT header</div>
+          <div class="slide-copy">"TACTIK READOUT · Behavior-Verified Strategic Intelligence. Así se ve cuando el sistema procesa cualquier conversación o documento."</div>
+          <div class="slide-image">→ Usar IMG_7420 (TACTIK READOUT header — Schema, Readout ID, MDD-L 85/100)</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-num">3</div>
+        <div class="slide-content">
+          <div class="slide-title">Decision Intelligence</div>
+          <div class="slide-copy">"Un número auditable. No magia. 78% FAVORABLE — calculado con 5 dimensiones con peso definido."</div>
+          <div class="slide-image">→ Usar IMG_7422 (Decision Intelligence 78% FAVORABLE con explicación completa)</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-num">4</div>
+        <div class="slide-content">
+          <div class="slide-title">Cognitive DNA</div>
+          <div class="slide-copy">"El DNA cognitivo del contraparte. Fear-Based Triggers, Leverage Points, Deal Breakers, Optimal Approach. No decorativo — operacional."</div>
+          <div class="slide-image">→ Usar IMG_7427 (DNA — Fear-Based Triggers, Rapport Strategies, Negotiation Style)</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-num">5</div>
+        <div class="slide-content">
+          <div class="slide-title">La fórmula PCG</div>
+          <div class="slide-copy">"La fórmula visible. Objective Alignment 25% · Evidence Density 20% · Strategic Coherence 20% · Counterpart Receptivity 20% · Residual Risk 15%"</div>
+          <div class="slide-image">→ Usar IMG_7429 (ChatGPT con PCG formula visible y bandas)</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-num">6</div>
+        <div class="slide-content">
+          <div class="slide-title">Before the Real Move</div>
+          <div class="slide-copy">"5 acciones concretas antes del siguiente movimiento. No resumen. Preparación."</div>
+          <div class="slide-image">→ Usar IMG_7423 (Before the Real Move + Risks Identified)</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-num">7</div>
+        <div class="slide-content">
+          <div class="slide-title">Your Next Challenge</div>
+          <div class="slide-copy">"El sistema nombra a quien va a presionar tu posición antes de que llegue. Con nivel de presión y estrategia de contraparte."</div>
+          <div class="slide-image">→ Usar IMG_7424 (Your Next Challenge — Ideological Purist HIGH, Worker Representative moderate)</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-num">8</div>
+        <div class="slide-content">
+          <div class="slide-title">CTA — La invitación</div>
+          <div class="slide-copy">Texto: "AI can answer. TACTIK preserves judgment. Pruébalo: tactikai.org/demo"<br>Fondo oscuro. Sin ruido.</div>
+          <div class="slide-image">→ Crear slide de texto. Mismo estilo que slide 1.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 24px;">Caption del post — listo para copiar</h2>
+    <div class="post-copy">Llevo meses hablando de lo que hace TACTIK.
+Hoy te lo muestro funcionando.
+No un pitch. No un deck. El flujo real. Desliza →
+
+—
+
+Subí una sesión a mi GPT "Tactik Debrief".
+30 segundos después tenía esto:
+
+→ DECISION INTELLIGENCE: 78% FAVORABLE
+→ DNA cognitivo del contraparte — Fear-Based Triggers, Deal Breakers, Optimal Approach. Accionable antes de la próxima reunión.
+→ PCG Score con fórmula auditada: Objective Alignment 25% · Evidence Density 20% · Strategic Coherence 20%
+→ Riesgos identificados con nivel (MEDIUM / LOW / HIGH)
+→ Tu próximo desafiante — nombrado antes de que llegue
+→ URL pública permanente del debrief. Compartible. Archivable.
+
+El caso de prueba: una sesión de debate socrático adversarial con un avatar de Paulo Freire.
+22 turnos. Capitalismo, fe y poder.
+TACTIC_SCORE: 9.70/10.
+
+No es un prototipo. Está en producción.
+
+—
+
+AI can answer.
+TACTIK preserves judgment.
+
+¿Querés probarlo?
+→ tactikai.org/demo
+
+#DecisionIntelligence #AI #Leadership #Negotiation #TACTIK</div>
+
+    <div class="callout blue" style="margin-top: 16px;">
+      <div class="callout-label">Timing recomendado</div>
+      <p><strong>Martes o miércoles, 8-9am hora de Miami.</strong> LinkedIn amplifica más contenido publicado en las primeras horas del día laboral. No publicar viernes ni fin de semana.</p>
+    </div>
+  </div>
+
+  <hr class="divider page-break">
+
+  <!-- SECTION 4: POST #2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title">Post #2 — La Categoría</div>
+      <div class="section-sub">Una semana después del Post #1</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 16px;">
+      <div class="card-title">Objetivo</div>
+      <div class="card-desc" style="margin-top: 4px;">Declarar la categoría en inglés, para la audiencia internacional. Después de que el Post #1 haya generado tráfico y DMs, este post eleva el marco conceptual.</div>
+    </div>
+
+    <div class="post-copy">Most AI tools still treat conversations as temporary.
+
+You ask. The model answers. The thread disappears.
+
+But real work does not happen in one chat.
+
+Judgment happens across emails, documents, meetings, research notes, workflows, and AI-agent interactions.
+
+The problem is no longer whether AI can answer.
+The problem is whether an organization can preserve the judgment behind the answer.
+
+What changed? What evidence supported it?
+What risk remained unresolved? What contradiction appeared?
+Who will challenge the decision next?
+
+That is the layer I have been building.
+
+TACTIK is designed as callable judgment infrastructure:
+a layer that can be invoked from any high-value knowledge surface
+to produce an auditable readout of judgment.
+
+A conversation can become a readout.
+An email thread can become a readout.
+A document can become a readout.
+A meeting transcript can become a readout.
+
+The result is not a summary.
+
+It is structured intelligence:
+groundedness score · decision intelligence · evidence anchors
+cognitive DNA · risks identified · next stakeholder challenge
+before-the-real-move recommendations
+
+AI can answer.
+TACTIK preserves judgment.
+
+→ tactikai.org/demo
+
+#CallableJudgmentInfrastructure #AIGovernance #EnterpriseAI #TACTIK</div>
+  </div>
+
+  <hr class="divider page-break">
+
+  <!-- SECTION 5: POST #3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title">Post #3 — La Arquitectura</div>
+      <div class="section-sub">Para la audiencia técnica · Después de los primeros comentarios</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 16px;">
+      <div class="card-title">Objetivo</div>
+      <div class="card-desc" style="margin-top: 4px;">Responder a las preguntas técnicas que van a llegar después del Post #1 y #2. Para personas como Kristina Vayo — AI governance, enterprise AI. Este post valida la arquitectura con el public.</div>
+    </div>
+
+    <div class="callout blue">
+      <div class="callout-label">Tema central</div>
+      <p><strong>Governing Execution, Not Cognition.</strong> La diferencia entre un sistema que preserva evidencia y un sistema que determina si la continuación sigue siendo admisible bajo condiciones cambiantes.</p>
+    </div>
+
+    <p style="margin-top: 12px;">Este post usa el lenguaje de Kristina y responde a su pregunta pública sobre mid-workflow authority invalidation — sin nombrarla, usando el insight como punto de partida de la conversación pública.</p>
+  </div>
+
+  <hr class="divider page-break">
+
+  <!-- SECTION 6: STRESS TESTS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div class="section-title">Stress Tests — Antes de Publicar</div>
+      <div class="section-sub">Correr en el GPT antes del lanzamiento</div>
+    </div>
+
+    <p>Antes de mandar a 60,000 personas al GPT, verificar que los 3 casos límite funcionan correctamente.</p>
+
+    <table style="margin-top: 16px;">
+      <thead>
+        <tr><th>#</th><th>Test</th><th>Qué pegar</th><th>Qué verificar</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Email corto</td>
+          <td>Hilo de 3-4 emails de negocio real</td>
+          <td>READOUT completo. DNA poblado. PCG visible.</td>
+          <td><span class="tag gray">Pendiente</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Contenido en inglés</td>
+          <td>Cualquier texto en inglés (artículo, transcripción)</td>
+          <td>El sistema no se traba. Responde en el idioma correcto.</td>
+          <td><span class="tag gray">Pendiente</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Input mínimo</td>
+          <td>3-4 líneas solamente</td>
+          <td>¿Qué devuelve? ¿Error o READOUT parcial? Documentar.</td>
+          <td><span class="tag gray">Pendiente</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Documento largo</td>
+          <td>Pegar el freiredebrief.md completo</td>
+          <td>TACTIC_SCORE ≥ 9.0. Baseline confirmado.</td>
+          <td><span class="tag green">Probado · 9.70</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Negociación real</td>
+          <td>Un extracto de una negociación de Santiago</td>
+          <td>DNA del contraparte correcto. Riesgos identificados.</td>
+          <td><span class="tag gray">Pendiente</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ul class="checklist" style="margin-top: 16px;">
+      <li><strong>GPT en "Anyone with the link"</strong> — confirmado. Verificado en incógnito.</li>
+      <li><strong>tactikai.org/demo live</strong> — página de destino activa y apuntando al GPT.</li>
+      <li><strong>Las 8 imágenes del carousel preparadas</strong> — en orden correcto, con texto de apoyo.</li>
+      <li><strong>El caption copiado</strong> — listo para pegar sin edición adicional.</li>
+      <li><strong>Día y hora definidos</strong> — martes o miércoles, 8-9am Miami.</li>
+    </ul>
+  </div>
+
+  <hr class="divider page-break">
+
+  <!-- SECTION 7: DESPUÉS DEL POST -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <div class="section-title">Plan de Respuesta — Después del Post</div>
+      <div class="section-sub">Las primeras 72 horas</div>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot">0h</div>
+        <div class="tl-body">
+          <div class="tl-title">Publicar el carousel</div>
+          <div class="tl-when">Día 1 — 8-9am Miami</div>
+          <div class="tl-desc">Post en feed personal primero. Después compartir en los grupos de mayor tracción (Tech Leadership, etc).</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">24h</div>
+        <div class="tl-body">
+          <div class="tl-title">Primer comentario propio</div>
+          <div class="tl-when">Día 2</div>
+          <div class="tl-desc">Agregar un comentario en el post con el link directo al GPT y una línea: "Si querés probarlo con tu propio material — escribime directo." Esto reactiva el algoritmo.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">48h</div>
+        <div class="tl-body">
+          <div class="tl-title">Compartir en grupos</div>
+          <div class="tl-when">Día 3</div>
+          <div class="tl-desc">Compartir el post personal en 3-4 grupos donde ya hay tracción. Esto genera el segundo spike de impresiones.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">72h</div>
+        <div class="tl-body">
+          <div class="tl-title">Responder cada DM como piloto</div>
+          <div class="tl-when">Días 3-5</div>
+          <div class="tl-desc">A cada persona que escriba, responder con una pregunta: "¿Qué tipo de conversación o documento tenés ahora mismo que querés analizar?" Eso convierte el DM en una demo personalizada.</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background: var(--green);">✓</div>
+        <div class="tl-body">
+          <div class="tl-title">Semana 2 — Post #2 (La Categoría)</div>
+          <div class="tl-when">7 días después</div>
+          <div class="tl-desc">Publicar el post de categoría en inglés. "Callable Judgment Infrastructure." Dirigido a la audiencia que vio el Post #1 y quiere entender el marco.</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 8px;">Qué decir cuando alguien pide una demo</h2>
+    <div class="callout green">
+      <div class="callout-label">Script de respuesta DM</div>
+      <p><strong>"¿Qué tenés ahora mismo que querés analizar? Una negociación, un documento, un email thread. Te muestro el READOUT en vivo con tu propio material. Eso vale más que cualquier demo genérica."</strong></p>
+    </div>
+  </div>
+
+  <hr class="divider page-break">
+
+  <!-- SECTION 8: RUTA DE COMERCIALIZACIÓN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <div class="section-title">Ruta de Comercialización</div>
+      <div class="section-sub">Del post al piloto al cliente</div>
+    </div>
+
+    <div class="callout dark">
+      <div class="callout-label">Principio</div>
+      <div class="callout-big" style="font-size: 1.1rem;">Los primeros 3 clientes no están en LinkedIn.<br>Están en tu agenda de contactos de Ecuador.</div>
+      <p style="margin-top: 8px; color: #94a3b8;">LinkedIn construye la credibilidad que hace que cuando llames a esas personas, ya sepan qué es TACTIK. Eso acorta el ciclo de venta a la mitad.</p>
+    </div>
+
+    <table style="margin-top: 20px;">
+      <thead>
+        <tr><th>Escenario</th><th>Clientes</th><th>Precio LATAM</th><th>Ingreso mensual</th><th>Valoración nueva</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Conservador</td>
+          <td>3 medianas sin nombre</td>
+          <td>$300-600/mes</td>
+          <td>~$1,350/mes</td>
+          <td>$5M — $8M</td>
+        </tr>
+        <tr>
+          <td>Objetivo</td>
+          <td>3 empresas reconocidas</td>
+          <td>$600-1,200/mes</td>
+          <td>~$2,700/mes</td>
+          <td>$8M — $15M</td>
+        </tr>
+        <tr>
+          <td>Ideal</td>
+          <td>1 cliente ecosistema MS/Google</td>
+          <td>$2,000+/mes</td>
+          <td>$2,000+/mes</td>
+          <td>$12M — $25M</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="two-col" style="margin-top: 16px;">
+      <div class="card">
+        <div class="card-title">El moat real (no la patente)</div>
+        <div class="card-desc" style="margin-top: 4px;">
+          1. 40 años de decisiones consecuentes que informaron la arquitectura<br>
+          2. El SESSION LEDGER que crece con cada uso<br>
+          3. El fundador como dominio irreplicable<br><br>
+          IP registrada: Mayo 31, 2025 · Prior art documentado · © 2025-2026
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">La única palabra para protegerlo</div>
+        <div class="card-desc" style="margin-top: 4px;">
+          En todo material público usar:<br><br>
+          <strong>"TACTIK's proprietary judgment infrastructure"</strong><br>
+          <strong>"Proprietary Cognitive DNA architecture"</strong><br>
+          <strong>"Proprietary methodology — TACTIK AI™"</strong><br><br>
+          Una línea al final de briefings técnicos:<br>
+          <em>"Specific implementation details are proprietary."</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider page-break">
+
+  <!-- SECTION 9: ASSETS LISTOS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <div class="section-title">Assets en Producción</div>
+      <div class="section-sub">Todo lo que está live hoy</div>
+    </div>
+
+    <div class="url-row">
+      <span class="url-label">Demo</span>
+      tactikai.org/demo
+    </div>
+    <div class="url-row">
+      <span class="url-label">GPT</span>
+      chatgpt.com/g/g-6a2d41f6483c8191ae8db6b03053530b-tactik-debrief
+    </div>
+    <div class="url-row">
+      <span class="url-label">Briefs</span>
+      tactikai.org/briefs/
+    </div>
+    <div class="url-row">
+      <span class="url-label">Google Brief</span>
+      tactikai.org/brief/google/
+    </div>
+    <div class="url-row">
+      <span class="url-label">Anthropic Brief</span>
+      tactikai.org/brief/anthropic/
+    </div>
+    <div class="url-row">
+      <span class="url-label">TACTIK Lens</span>
+      tactikai.org/tools/lens/
+    </div>
+    <div class="url-row">
+      <span class="url-label">API Endpoint</span>
+      tactik-debrief-buddy.lovable.app/api/public/debrief
+    </div>
+    <div class="url-row">
+      <span class="url-label">MCP Server</span>
+      mcp.tactikai.org
+    </div>
+
+    <div class="two-col" style="margin-top: 20px;">
+      <div class="card green">
+        <div class="card-title">Modelo del operador</div>
+        <div class="card-desc">SANTIAGO-DNA.md · 9 capas · SESSION LEDGER Sessions 001-002 · Skill /brief activo en Claude Code</div>
+      </div>
+      <div class="card green">
+        <div class="card-title">IP documentada</div>
+        <div class="card-desc">Email Mayo 31, 2025 · Update Jun 23, 2026 · GitHub commits timestamped · tactikai.org live · Prior art en 4 capas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIERRE -->
+  <div class="callout dark" style="margin-top: 32px; text-align: center; padding: 40px;">
+    <div class="callout-label" style="text-align: center;">La decisión correcta</div>
+    <div class="callout-big" style="text-align: center; font-size: 1.6rem; margin-bottom: 16px;">
+      Para de construir.<br>Empieza a vender.
+    </div>
+    <p style="text-align: center; max-width: 500px; margin: 0 auto;">
+      El producto funciona. La arquitectura está. El margen es 88%.
+      Lo que no tenés todavía es un cliente que pague —
+      y eso no se resuelve con más código.
+    </p>
+  </div>
+
+  <div class="footer">
+    TACTIK AI™ · Santiago Maspons Febrez Cordero · Key Biscayne, Florida ·
+    © 2025-2026 · Proprietary methodology · All rights reserved ·
+    Documento interno — Junio 23, 2026
+  </div>
+
+</main>
+
+</body>
+</html>
