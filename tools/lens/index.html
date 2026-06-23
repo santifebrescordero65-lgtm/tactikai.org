@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TACTIK Lens — Empaquetador Chrome Extension</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    :root {
+      --bg: #090e1a; --surface: #111827; --border: #1e2d3d;
+      --accent: #3b82f6; --cyan: #06b6d4; --green: #10b981;
+      --text: #f1f5f9; --muted: #7c8fa1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 24px; text-align: center;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: rgba(9,14,26,0.9); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 58px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; z-index: 100;
+    }
+    .nav-logo { font-weight: 800; font-size: 0.85rem; letter-spacing: 0.12em; color: var(--text); text-decoration: none; }
+    .nav-links a { font-size: 0.78rem; color: var(--muted); text-decoration: none; margin-left: 24px; }
+    .nav-links a:hover { color: var(--text); }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 48px 40px; max-width: 520px; width: 100%;
+      margin-top: 20px;
+    }
+    .lens-icon { font-size: 3rem; margin-bottom: 20px; }
+    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+    .subtitle {
+      font-size: 0.85rem; color: var(--muted); margin-bottom: 32px; line-height: 1.6;
+    }
+    .subtitle strong { color: var(--text); }
+
+    /* FEATURES */
+    .features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; text-align: left; }
+    .feat { display: flex; align-items: flex-start; gap: 12px; }
+    .feat-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+    .feat-text { font-size: 0.82rem; color: var(--muted); }
+    .feat-text strong { color: var(--text); }
+
+    /* BUTTON */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--accent); color: white; border: none;
+      padding: 16px 32px; border-radius: 10px; cursor: pointer;
+      font-size: 0.95rem; font-weight: 700; width: 100%; justify-content: center;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #2563eb; }
+    .btn:active { transform: scale(0.98); }
+
+    /* STATUS */
+    .status {
+      margin-top: 20px; font-size: 0.78rem; color: var(--muted);
+      display: none; padding: 12px; background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; color: var(--green);
+    }
+    .status.show { display: block; }
+
+    /* MANIFEST PREVIEW */
+    .manifest {
+      margin-top: 28px; text-align: left;
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px; overflow: hidden;
+    }
+    .manifest-header {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .manifest pre {
+      font-family: 'Menlo', 'Monaco', monospace; font-size: 0.72rem;
+      color: var(--cyan); line-height: 1.7; overflow-x: auto;
+    }
+    .key { color: var(--accent); }
+    .val { color: #a5d6ff; }
+    .str { color: var(--green); }
+
+    /* INSTRUCTIONS */
+    .instructions {
+      margin-top: 28px; text-align: left;
+      border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px;
+    }
+    .instructions h3 { font-size: 0.78rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+    .instructions ol { padding-left: 16px; }
+    .instructions li { font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; line-height: 1.5; }
+    .instructions li strong { color: var(--text); }
+
+    @media (max-width: 600px) {
+      .card { padding: 32px 20px; }
+      nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="https://tactikai.org" class="nav-logo">TACTIK AI</a>
+  <div class="nav-links">
+    <a href="/briefs/">Briefs</a>
+    <a href="/brief/google/">Google Brief</a>
+  </div>
+</nav>
+
+<div class="card">
+  <div class="lens-icon">🔭</div>
+  <h1>TACTIK Lens</h1>
+  <p class="subtitle">
+    Chrome extension (Manifest v3 · Side Panel) que captura el contexto de cualquier
+    superficie Google — Gmail, Docs, Meet, Search — e inyecta directamente en
+    <strong>Deep Live</strong> para análisis.
+  </p>
+
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">📌</div>
+      <div class="feat-text"><strong>Side Panel nativo</strong> — visible junto a cualquier pestaña de Google Workspace sin interrumpir el flujo.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-text"><strong>Un clic</strong> — captura el texto completo de la pestaña activa: hilo de email, documento, notas de reunión.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🧠</div>
+      <div class="feat-text"><strong>Inyección directa</strong> — el contexto capturado va directo al motor de decisiones. Sin copy-paste.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔗</div>
+      <div class="feat-text"><strong>OPAL/Chrome</strong> — el starter del GPT "Tactik Debrief": <em>"Sesión capturada — genera el TACTIK READOUT."</em></div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="generarZip()">
+    📦 Generar y Descargar TACTIK_Lens_Package.zip
+  </button>
+
+  <div class="status" id="status">
+    ✓ Paquete generado correctamente. Descarga iniciada.
+  </div>
+
+  <div class="instructions">
+    <h3>Cómo instalar en Chrome</h3>
+    <ol>
+      <li>Haz clic en el botón de arriba para descargar el .zip</li>
+      <li>Descomprime el archivo en una carpeta local</li>
+      <li>Ve a <strong>chrome://extensions/</strong> en tu navegador</li>
+      <li>Activa <strong>"Modo desarrollador"</strong> (esquina superior derecha)</li>
+      <li>Haz clic en <strong>"Cargar extensión sin empaquetar"</strong></li>
+      <li>Selecciona la carpeta descomprimida</li>
+      <li>El ícono de TACTIK Lens aparecerá en la barra de herramientas</li>
+    </ol>
+  </div>
+
+  <div class="manifest">
+    <div class="manifest-header">manifest.json — Contenido del paquete</div>
+    <pre>{
+  <span class="key">"manifest_version"</span>: <span class="val">3</span>,
+  <span class="key">"name"</span>: <span class="str">"TACTIK Lens"</span>,
+  <span class="key">"version"</span>: <span class="str">"1.0"</span>,
+  <span class="key">"description"</span>: <span class="str">"Decision Intelligence Layer · Google Ecosystem"</span>,
+  <span class="key">"permissions"</span>: [<span class="str">"sidePanel"</span>, <span class="str">"activeTab"</span>, <span class="str">"scripting"</span>],
+  <span class="key">"side_panel"</span>: { <span class="key">"default_path"</span>: <span class="str">"sidepanel.html"</span> }
+}</pre>
+  </div>
+</div>
+
+<script>
+  function generarZip() {
+    var zip = new JSZip();
+
+    zip.file("manifest.json", JSON.stringify({
+      "manifest_version": 3,
+      "name": "TACTIK Lens",
+      "version": "1.0",
+      "description": "Decision Intelligence Layer para el Ecosistema Google",
+      "permissions": ["sidePanel", "activeTab", "scripting"],
+      "background": { "service_worker": "background.js" },
+      "action": { "default_title": "Abrir TACTIK Lens", "default_icon": "icon.png" },
+      "side_panel": { "default_path": "sidepanel.html" }
+    }, null, 2));
+
+    zip.file("background.js",
+      `chrome.sidePanel\n  .setPanelBehavior({ openPanelOnActionIconClick: true })\n  .catch((error) => console.error(error));`
+    );
+
+    zip.file("sidepanel.html", `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>TACTIK Lens</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: 20px; background: #090e1a; color: #f1f5f9; }
+    .header { font-weight: 800; font-size: 1rem; letter-spacing: 0.08em; border-bottom: 1px solid #1e2d3d; padding-bottom: 12px; margin-bottom: 16px; }
+    .header span { color: #06b6d4; }
+    p { font-size: 0.8rem; color: #7c8fa1; margin-bottom: 16px; }
+    button { background: #3b82f6; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 700; font-size: 0.85rem; }
+    button:hover { background: #2563eb; }
+    #result { margin-top: 16px; padding: 12px; background: #111827; border: 1px solid #1e2d3d; border-radius: 8px; font-size: 0.78rem; color: #7c8fa1; min-height: 80px; line-height: 1.5; }
+    #result.success { border-color: rgba(16,185,129,0.3); color: #10b981; }
+  </style>
+</head>
+<body>
+  <div class="header">TACTIK <span>Lens</span></div>
+  <p>Captura el contexto de esta pestaña e inyéctalo en Deep Live para análisis de decisiones.</p>
+  <button id="capture-btn">Capturar Contexto (Stage 1)</button>
+  <div id="result">Esperando captura...</div>
+  <script src="sidepanel.js"><\/script>
+</body>
+</html>`);
+
+    zip.file("sidepanel.js", `document.getElementById('capture-btn').addEventListener('click', async () => {
+  const result = document.getElementById('result');
+  result.className = '';
+  result.innerText = 'Extrayendo datos de la pestaña...';
+
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: () => document.body.innerText,
+  }, (results) => {
+    if (results && results[0] && results[0].result) {
+      const text = results[0].result;
+      result.className = 'success';
+      result.innerText = \`✓ Éxito. \${text.length.toLocaleString()} caracteres capturados.\\n\\nListo para inyectar en Deep Live · Tactik Debrief.\\n\\nPega este contexto en el GPT "Tactik Debrief" con el prompt:\\n[OPAL / Chrome] Sesión capturada — genera el TACTIK READOUT.\`;
+      console.log('[TACTIK Lens] Texto capturado:', text.substring(0, 500) + '...');
+    } else {
+      result.innerText = 'No se pudo extraer el texto de esta página.';
+    }
+  });
+});`);
+
+    zip.file("icon.png", "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", {base64: true});
+
+    zip.generateAsync({type:"blob"}).then(function(content) {
+      var url = window.URL.createObjectURL(content);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "TACTIK_Lens_Package.zip";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      document.getElementById('status').classList.add('show');
+    });
+  }
+</script>
+
+</body>
+</html>

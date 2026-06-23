@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TACTIK — Briefs</title>
+  <meta name="description" content="TACTIK strategic briefs by category: Google Ecosystem, Tech Partnerships, Education, Investors, Institutional.">
+  <style>
+    :root {
+      --bg: #090e1a; --surface: #111827; --border: #1e2d3d;
+      --accent: #3b82f6; --cyan: #06b6d4; --green: #10b981;
+      --text: #f1f5f9; --muted: #7c8fa1; --muted2: #4b5e6e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6; font-size: 15px;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(9,14,26,0.9); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      height: 58px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+    }
+    .nav-logo { font-weight: 800; font-size: 0.85rem; letter-spacing: 0.12em; color: var(--text); text-decoration: none; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { font-size: 0.8rem; color: var(--muted); text-decoration: none; }
+    .nav-links a:hover { color: var(--text); }
+
+    main { max-width: 960px; margin: 0 auto; padding: 100px 24px 80px; }
+
+    .page-tag {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--muted); margin-bottom: 12px;
+    }
+    h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 12px; }
+    h1 em { font-style: normal; color: var(--accent); }
+    .page-lead { font-size: 0.95rem; color: var(--muted); max-width: 640px; margin-bottom: 56px; }
+    .page-lead strong { color: var(--text); }
+
+    /* FILTER BAR */
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 48px; }
+    .filter {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+      color: var(--muted); background: transparent; cursor: pointer; text-decoration: none;
+      transition: all 0.15s;
+    }
+    .filter:hover, .filter.active { border-color: var(--accent); color: var(--accent); background: rgba(59,130,246,0.06); }
+    .filter.new { border-color: rgba(6,182,212,0.35); color: var(--cyan); }
+    .filter.new:hover { background: rgba(6,182,212,0.06); }
+
+    /* CATEGORY SECTION */
+    .cat-section { margin-bottom: 56px; }
+    .cat-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .cat-icon { font-size: 1.1rem; }
+    .cat-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+    .cat-badge {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 2px 8px; border-radius: 3px;
+    }
+    .cat-badge.new { color: var(--cyan); background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); }
+    .cat-badge.live { color: var(--green); background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); }
+    .cat-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* BRIEF CARDS */
+    .brief-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .brief-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px; text-decoration: none;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .brief-card:hover { border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.03); }
+    .brief-card.featured { border-color: rgba(6,182,212,0.3); background: rgba(6,182,212,0.03); }
+    .brief-card.featured:hover { border-color: rgba(6,182,212,0.55); background: rgba(6,182,212,0.06); }
+
+    .bc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .bc-tag {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 3px 8px; border-radius: 3px;
+    }
+    .bc-tag.google { color: var(--cyan); background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); }
+    .bc-tag.tech { color: var(--accent); background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); }
+    .bc-tag.edu { color: #a78bfa; background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); }
+    .bc-tag.inv { color: #fbbf24; background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); }
+    .bc-tag.inst { color: var(--muted); background: rgba(124,143,161,0.08); border: 1px solid var(--border); }
+
+    .bc-status { font-size: 0.62rem; color: var(--green); display: flex; align-items: center; gap: 4px; }
+    .bc-status::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+    .bc-status.draft { color: var(--muted); }
+    .bc-status.draft::before { background: var(--muted); animation: none; }
+
+    .bc-title { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .bc-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .bc-meta { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+    .bc-date { font-size: 0.68rem; color: var(--muted2); }
+    .bc-arrow { font-size: 0.75rem; color: var(--accent); margin-left: auto; opacity: 0; transition: opacity 0.15s; }
+    .brief-card:hover .bc-arrow { opacity: 1; }
+
+    /* TOOL CARDS */
+    .tool-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px; text-decoration: none;
+      display: flex; align-items: center; gap: 16px;
+      transition: border-color 0.15s;
+    }
+    .tool-card:hover { border-color: rgba(59,130,246,0.35); }
+    .tc-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .tc-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .tc-desc { font-size: 0.75rem; color: var(--muted); }
+
+    /* API CALLOUT */
+    .api-callout {
+      background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 10px; padding: 20px 24px; margin-bottom: 48px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .api-callout .icon { font-size: 1.4rem; flex-shrink: 0; }
+    .api-callout p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+    .api-callout p strong { color: var(--text); }
+    .api-callout a { color: var(--accent); text-decoration: none; font-size: 0.78rem; }
+    .api-callout a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      main { padding: 80px 16px 60px; }
+      .brief-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="https://tactikai.org" class="nav-logo">TACTIK AI</a>
+  <div class="nav-links">
+    <a href="https://tactikai.org/simulate">Try it</a>
+    <a href="https://tactikai.org">Platform</a>
+  </div>
+</nav>
+
+<main>
+
+  <div class="page-tag">Strategic Intelligence · Brief System</div>
+  <h1>TACTIK <em>Briefs</em></h1>
+  <p class="page-lead">
+    Structured briefing documents for every ecosystem TACTIK operates in.
+    Each brief is a <strong>decision intelligence dossier</strong> — grounded in Cognitive DNA,
+    designed to be read by a person or called by an LLM.
+  </p>
+
+  <!-- API CALLOUT -->
+  <div class="api-callout">
+    <div class="icon">🔗</div>
+    <div>
+      <p>
+        <strong>Brief System as LLM Tool</strong> — Every brief maps to a callable endpoint.
+        The Tactik Debrief engine accepts Gmail threads, Docs, Meet transcripts, or any text
+        and returns a structured DNA + PCG debrief.
+        <br>
+        <a href="https://tactik-debrief-buddy.lovable.app/api/public/debrief">POST /api/public/debrief</a>
+        &nbsp;·&nbsp;
+        <a href="/brief/google/">Google Ecosystem →</a>
+        &nbsp;·&nbsp;
+        <a href="/tools/lens/">TACTIK Lens Chrome extension →</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-bar">
+    <a href="#" class="filter active">All</a>
+    <a href="#google" class="filter new">Google Ecosystem ✦ New</a>
+    <a href="#tech" class="filter">Tech Partnerships</a>
+    <a href="#education" class="filter">Education</a>
+    <a href="#investors" class="filter">Investors</a>
+    <a href="#institutional" class="filter">Institutional</a>
+  </div>
+
+  <!-- CATEGORY: GOOGLE ECOSYSTEM (NEW) -->
+  <div class="cat-section" id="google">
+    <div class="cat-header">
+      <div class="cat-icon">🌐</div>
+      <div class="cat-title">Google Ecosystem</div>
+      <div class="cat-badge new">New Category</div>
+      <div class="cat-line"></div>
+    </div>
+    <div class="brief-grid">
+      <a href="/brief/google/" class="brief-card featured">
+        <div class="bc-top">
+          <span class="bc-tag google">Google Ecosystem</span>
+          <span class="bc-status">Live</span>
+        </div>
+        <div class="bc-title">TACTIK × Google — Decision Intelligence</div>
+        <div class="bc-desc">
+          The category Google doesn't own yet. Opal + Deep Live integration architecture.
+          Gmail, Docs, Meet, Calendar — all as inputs to the debrief engine. Includes TACTIK Lens.
+        </div>
+        <div class="bc-meta">
+          <span class="bc-date">June 2026</span>
+          <span class="bc-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CATEGORY: TECH PARTNERSHIPS -->
+  <div class="cat-section" id="tech">
+    <div class="cat-header">
+      <div class="cat-icon">🤝</div>
+      <div class="cat-title">Tech Partnerships</div>
+      <div class="cat-badge live">Active</div>
+      <div class="cat-line"></div>
+    </div>
+    <div class="brief-grid">
+      <a href="https://tactikai.org/openai-brief" class="brief-card">
+        <div class="bc-top">
+          <span class="bc-tag tech">OpenAI</span>
+          <span class="bc-status">Live</span>
+        </div>
+        <div class="bc-title">TACTIK × OpenAI — Partnership Brief</div>
+        <div class="bc-desc">
+          Strategic partnership proposal. Decision rehearsal infrastructure as an OpenAI ecosystem extension.
+          GPT Store integration, MCP server, Practice Studio.
+        </div>
+        <div class="bc-meta">
+          <span class="bc-date">Feb 2026</span>
+          <span class="bc-arrow">→</span>
+        </div>
+      </a>
+      <a href="https://tactikai.org/brief/nieves" class="brief-card">
+        <div class="bc-top">
+          <span class="bc-tag tech">Microsoft</span>
+          <span class="bc-status">Live</span>
+        </div>
+        <div class="bc-title">Microsoft Pegasus — Submission Brief</div>
+        <div class="bc-desc">
+          Azure-native architecture proposal for the Microsoft for Startups Pegasus Program.
+          Teams integration, ROI framework, enterprise pilot structure.
+        </div>
+        <div class="bc-meta">
+          <span class="bc-date">Mar 2026</span>
+          <span class="bc-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CATEGORY: EDUCATION -->
+  <div class="cat-section" id="education">
+    <div class="cat-header">
+      <div class="cat-icon">🎓</div>
+      <div class="cat-title">Education Vertical</div>
+      <div class="cat-badge live">Active</div>
+      <div class="cat-line"></div>
+    </div>
+    <div class="brief-grid">
+      <a href="https://tactikai.org/brief/dahik" class="brief-card">
+        <div class="bc-top">
+          <span class="bc-tag edu">Education</span>
+          <span class="bc-status">Live</span>
+        </div>
+        <div class="bc-title">TACTIKAI × UEES — Dr. Alberto Dahik</div>
+        <div class="bc-desc">
+          Alliance brief for Universidad de Especialidades Espíritu Santo. Cognitive DNA comparison,
+          3-phase partnership proposal, Education vertical positioning.
+        </div>
+        <div class="bc-meta">
+          <span class="bc-date">Mar 2026</span>
+          <span class="bc-arrow">→</span>
+        </div>
+      </a>
+      <a href="https://tactikai.org/study-lab" class="brief-card">
+        <div class="bc-top">
+          <span class="bc-tag edu">Study Lab</span>
+          <span class="bc-status">Live</span>
+        </div>
+        <div class="bc-title">Study Lab — Socratic Sparring Engine</div>
+        <div class="bc-desc">
+          The education vertical of TACTIK AI. Thesis defense, interviews, case studies.
+          Anti-cheating architecture. Bloom's Taxonomy tracking. Professor Dashboard.
+        </div>
+        <div class="bc-meta">
+          <span class="bc-date">Mar 2026</span>
+          <span class="bc-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CATEGORY: INVESTORS -->
+  <div class="cat-section" id="investors">
+    <div class="cat-header">
+      <div class="cat-icon">💼</div>
+      <div class="cat-title">Investor Briefs</div>
+      <div class="cat-badge live">Active</div>
+      <div class="cat-line"></div>
+    </div>
+    <div class="brief-grid">
+      <a href="https://tactikai.org/brief/nieves" class="brief-card">
+        <div class="bc-top">
+          <span class="bc-tag inv">Investor</span>
+          <span class="bc-status">Live</span>
+        </div>
+        <div class="bc-title">Heka Capital — Nieves Brief</div>
+        <div class="bc-desc">
+          Personalized investor brief for Heka Capital. Platform overview, product links,
+          Microsoft roadmap timeline, enterprise unit economics.
+        </div>
+        <div class="bc-meta">
+          <span class="bc-date">2026</span>
+          <span class="bc-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CATEGORY: INSTITUTIONAL -->
+  <div class="cat-section" id="institutional">
+    <div class="cat-header">
+      <div class="cat-icon">🏛️</div>
+      <div class="cat-title">Institutional &amp; Technical</div>
+      <div class="cat-badge live">Active</div>
+      <div class="cat-line"></div>
+    </div>
+    <div class="brief-grid">
+      <a href="https://tactikai.org/technical-spec" class="brief-card">
+        <div class="bc-top">
+          <span class="bc-tag inst">Due Diligence</span>
+          <span class="bc-status">Live</span>
+        </div>
+        <div class="bc-title">Architecture Due Diligence — Google/DeepMind</div>
+        <div class="bc-desc">
+          Technical dossier for due diligence committees. 14 sections covering COM, Decision Ledger,
+          Cognitive DNA, Contradiction Engine, Defensibility.
+        </div>
+        <div class="bc-meta">
+          <span class="bc-date">2026</span>
+          <span class="bc-arrow">→</span>
+        </div>
+      </a>
+      <a href="https://tactikai.org/technical-spec" class="brief-card">
+        <div class="bc-top">
+          <span class="bc-tag inst">Platform Review</span>
+          <span class="bc-status">Live</span>
+        </div>
+        <div class="bc-title">Revision Completa — Mar 6, 2026</div>
+        <div class="bc-desc">
+          Full platform technical review. 50+ edge functions, 19 DB tables with RLS,
+          9-stage cognitive pipeline, Microsoft Pegasus submission.
+        </div>
+        <div class="bc-meta">
+          <span class="bc-date">Mar 2026</span>
+          <span class="bc-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TOOLS SECTION -->
+  <div class="cat-section">
+    <div class="cat-header">
+      <div class="cat-icon">🔧</div>
+      <div class="cat-title">Tools</div>
+      <div class="cat-line"></div>
+    </div>
+    <div class="brief-grid">
+      <a href="/tools/lens/" class="tool-card">
+        <div class="tc-icon">🔭</div>
+        <div>
+          <div class="tc-title">TACTIK Lens — Chrome Extension</div>
+          <div class="tc-desc">Generate the Chrome extension package (.zip) for capture from any Google surface → Deep Live.</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
