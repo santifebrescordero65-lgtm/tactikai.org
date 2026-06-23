@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TACTIK — Live Demo</title>
+  <meta name="description" content="See TACTIK's Decision Intelligence engine in action. Paste any conversation, negotiation, or document and get a structured debrief in seconds.">
+  <style>
+    :root {
+      --bg: #090e1a; --surface: #111827; --surface2: #1e293b;
+      --border: #1e2d3d; --accent: #3b82f6; --cyan: #06b6d4;
+      --green: #10b981; --text: #f1f5f9; --muted: #7c8fa1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(9,14,26,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+    }
+    .nav-logo { font-weight: 800; font-size: 0.85rem; letter-spacing: 0.12em; color: var(--text); text-decoration: none; }
+    .nav-pill {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--green); border: 1px solid rgba(16,185,129,0.3);
+      padding: 4px 10px; border-radius: 4px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .nav-pill::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    main { max-width: 760px; margin: 0 auto; padding: 96px 24px 80px; }
+
+    /* HERO */
+    .hero-tag {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--cyan); margin-bottom: 16px;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    h1 em { font-style: normal; color: var(--accent); }
+    .hero-lead {
+      font-size: 1rem; color: var(--muted); max-width: 580px;
+      margin-bottom: 40px; line-height: 1.65;
+    }
+    .hero-lead strong { color: var(--text); }
+
+    /* READOUT PREVIEW */
+    .readout-preview {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; margin-bottom: 48px;
+    }
+    .rp-header {
+      background: var(--surface2); border-bottom: 1px solid var(--border);
+      padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+    }
+    .rp-icon {
+      width: 32px; height: 32px; border-radius: 7px; background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800; color: white; flex-shrink: 0;
+    }
+    .rp-title { font-size: 0.82rem; font-weight: 700; color: var(--text); }
+    .rp-sub { font-size: 0.68rem; color: var(--muted); }
+    .rp-badge {
+      margin-left: auto; font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      color: var(--green); border: 1px solid rgba(16,185,129,0.3);
+      padding: 3px 8px; border-radius: 3px;
+    }
+    .rp-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+    .rp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .rp-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px;
+    }
+    .rp-card.featured { border-color: rgba(59,130,246,0.35); background: rgba(59,130,246,0.04); }
+    .rp-label {
+      font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .rp-value { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
+    .rp-value.green { color: var(--green); }
+    .rp-value.sm { font-size: 0.85rem; color: var(--text); line-height: 1.5; }
+    .rp-sub-value { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+    .rp-dna { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .rp-dna-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .dna-item { font-size: 0.73rem; color: var(--muted); padding: 7px 10px; background: var(--surface2); border-radius: 5px; }
+    .dna-item strong { color: var(--text); display: block; font-size: 0.68rem; margin-bottom: 2px; }
+
+    /* CTA BUTTONS */
+    .cta-section { margin-bottom: 48px; }
+    .cta-section h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+    .cta-section p { font-size: 0.88rem; color: var(--muted); margin-bottom: 24px; }
+    .btn-group { display: flex; flex-direction: column; gap: 12px; }
+    .btn-primary {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--accent); color: white; text-decoration: none;
+      padding: 18px 24px; border-radius: 10px; font-weight: 600; font-size: 0.95rem;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-primary .btn-arrow { font-size: 1.1rem; }
+    .btn-secondary {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); text-decoration: none;
+      padding: 18px 24px; border-radius: 10px; font-weight: 500; font-size: 0.9rem;
+      transition: border-color 0.15s;
+    }
+    .btn-secondary:hover { border-color: rgba(59,130,246,0.4); }
+    .btn-note { font-size: 0.72rem; color: var(--muted); margin-top: 2px; font-weight: 400; }
+
+    /* HOW IT WORKS */
+    .how-section { margin-bottom: 48px; }
+    .how-section h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .step-n {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--accent);
+      color: white; font-size: 0.72rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+    }
+    .step-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .step-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+
+    /* WHAT YOU GET */
+    .output-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 48px; }
+    .output-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+    }
+    .output-icon { font-size: 1.2rem; margin-bottom: 8px; }
+    .output-title { font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .output-desc { font-size: 0.73rem; color: var(--muted); line-height: 1.5; }
+
+    /* CONTACT */
+    .contact-section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px; text-align: center;
+    }
+    .contact-section h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .contact-section p { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
+    .contact-link {
+      display: inline-block; color: var(--accent); text-decoration: none;
+      font-size: 0.88rem; font-weight: 600; border: 1px solid rgba(59,130,246,0.3);
+      padding: 10px 24px; border-radius: 7px;
+    }
+    .contact-link:hover { background: rgba(59,130,246,0.06); }
+
+    @media (max-width: 580px) {
+      nav { padding: 0 16px; }
+      main { padding: 80px 16px 60px; }
+      .rp-row { grid-template-columns: 1fr; }
+      .rp-dna-grid { grid-template-columns: 1fr; }
+      .output-grid { grid-template-columns: 1fr 1fr; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="https://tactikai.org" class="nav-logo">TACTIK AI</a>
+  <span class="nav-pill">Live in Production</span>
+</nav>
+
+<main>
+
+  <div class="hero-tag">Decision Intelligence · Live Demo</div>
+  <h1>Paste a conversation.<br>Get an <em>auditable debrief</em>.</h1>
+  <p class="hero-lead">
+    TACTIK analyzes any conversation, negotiation, email thread, or document —
+    and returns a <strong>structured intelligence report</strong>: decision score,
+    cognitive DNA of every actor, risks identified, and your next real challenge.
+    In seconds.
+  </p>
+
+  <!-- READOUT PREVIEW -->
+  <div class="readout-preview">
+    <div class="rp-header">
+      <div class="rp-icon">T</div>
+      <div>
+        <div class="rp-title">TACTIK READOUT</div>
+        <div class="rp-sub">Behavior-Verified Strategic Intelligence · PCG v1.2 · DNA v1.8</div>
+      </div>
+      <div class="rp-badge">Sample Output</div>
+    </div>
+    <div class="rp-body">
+      <div class="rp-row">
+        <div class="rp-card featured">
+          <div class="rp-label">Decision Intelligence</div>
+          <div class="rp-value">78%</div>
+          <div class="rp-sub-value">FAVORABLE · Objective Alignment High</div>
+        </div>
+        <div class="rp-card">
+          <div class="rp-label">Drift Detector · MDD-L</div>
+          <div class="rp-value green">85</div>
+          <div class="rp-sub-value">Mostly grounded · Evidence anchored</div>
+        </div>
+      </div>
+      <div class="rp-dna">
+        <div class="rp-label">Cognitive DNA — Counterpart Profile</div>
+        <div class="rp-dna-grid">
+          <div class="dna-item"><strong>Fear-Based Triggers</strong>Imposition of dogma · Loss of individual freedom</div>
+          <div class="dna-item"><strong>Leverage Points</strong>Direct experience · Commitment to human dignity</div>
+          <div class="dna-item"><strong>Deal Breakers</strong>Ideological framing · Condescending engagement</div>
+          <div class="dna-item"><strong>Optimal Approach</strong>Collaborative · Evidence-first · Shared goals</div>
+        </div>
+      </div>
+      <div class="rp-row">
+        <div class="rp-card">
+          <div class="rp-label">Risks Identified</div>
+          <div class="rp-value sm">MEDIUM — Statement open to misinterpretation<br>LOW — Term lacks specificity</div>
+        </div>
+        <div class="rp-card">
+          <div class="rp-label">Your Next Challenge</div>
+          <div class="rp-value sm">Ideological Purist · HIGH pressure<br>Will co-opt your framing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRY IT -->
+  <div class="cta-section">
+    <h2>Try it now — two ways</h2>
+    <p>The same engine. Two entry points. Pick the one that works for you.</p>
+    <div class="btn-group">
+      <a href="https://chatgpt.com/g/g-6a2d41f6483c8191ae8db6b03053530b-tactik-debrief" class="btn-primary" target="_blank" rel="noopener">
+        <div>
+          <div>Open Tactik Debrief in ChatGPT →</div>
+          <div class="btn-note">Paste any conversation or document · Requires ChatGPT account</div>
+        </div>
+        <span class="btn-arrow">↗</span>
+      </a>
+      <a href="https://tactik-debrief-buddy.lovable.app" class="btn-secondary" target="_blank" rel="noopener">
+        <div>
+          <div>Open the TACTIK Debrief Interface</div>
+          <div class="btn-note">Full web interface · No account required to view</div>
+        </div>
+        <span class="btn-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-section">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div>
+          <div class="step-title">Paste your material</div>
+          <div class="step-desc">Any conversation, negotiation transcript, email thread, meeting notes, or document. Spanish or English. Any format.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div>
+          <div class="step-title">The engine analyzes</div>
+          <div class="step-desc">TACTIK's 9-stage proprietary pipeline extracts cognitive patterns, evaluates decision quality, and identifies every actor's real incentive structure.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div>
+          <div class="step-title">You get the READOUT</div>
+          <div class="step-desc">Decision Intelligence score (with formula), Cognitive DNA of every actor, risks identified, next actions, and the challenge coming that you haven't seen yet.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div>
+          <div class="step-title">A permanent URL is generated</div>
+          <div class="step-desc">Every debrief becomes a shareable, archivable artifact. Send it to your team. Load it into the next context. It doesn't evaporate.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT YOU GET -->
+  <div style="margin-bottom:24px;">
+    <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:16px;">What every READOUT contains</h2>
+  </div>
+  <div class="output-grid">
+    <div class="output-card">
+      <div class="output-icon">🎯</div>
+      <div class="output-title">Decision Intelligence %</div>
+      <div class="output-desc">Weighted score across 5 dimensions with bands. Not a magic number — an auditable formula.</div>
+    </div>
+    <div class="output-card">
+      <div class="output-icon">🧬</div>
+      <div class="output-title">Cognitive DNA</div>
+      <div class="output-desc">Fear triggers, leverage points, deal breakers, optimal approach. Operational before a meeting.</div>
+    </div>
+    <div class="output-card">
+      <div class="output-icon">📊</div>
+      <div class="output-title">PCG Scores</div>
+      <div class="output-desc">F1–F5 performance grid. Initiative, depth, advance, coherence, independence.</div>
+    </div>
+    <div class="output-card">
+      <div class="output-icon">⚠️</div>
+      <div class="output-title">Risks Identified</div>
+      <div class="output-desc">Specific risks tagged MEDIUM / LOW / HIGH. Grounded in your actual content.</div>
+    </div>
+    <div class="output-card">
+      <div class="output-icon">🔭</div>
+      <div class="output-title">Your Next Challenge</div>
+      <div class="output-desc">The stakeholder who will pressure-test your position next. Named and profiled before they arrive.</div>
+    </div>
+    <div class="output-card">
+      <div class="output-icon">🔗</div>
+      <div class="output-title">Permanent URL</div>
+      <div class="output-desc">Every debrief lives at a public link. Share it, archive it, load it into any future session.</div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-section">
+    <h2>Want a pilot for your organization?</h2>
+    <p>TACTIK is available for enterprise pilots. Negotiation, M&A, board preparation, diplomatic engagement, education.</p>
+    <a href="mailto:smaspons65@gmail.com?subject=TACTIK%20Pilot%20Request" class="contact-link">
+      Request a pilot →
+    </a>
+  </div>
+
+</main>
+</body>
+</html>
