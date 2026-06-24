@@ -1,0 +1,25 @@
+{
+  "name": "linkedin-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for LinkedIn — 13 tools, your browser, your session",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "linkedin-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "install-browsers": "playwright install chromium"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "playwright": "^1.45.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
