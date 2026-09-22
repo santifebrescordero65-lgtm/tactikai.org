@@ -1,0 +1,347 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>TACTIK AI and SynerGIA: Architecture and Positioning Brief</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#101722; --ink-2:#3C4757; --ink-3:#6B7789; --rule:#DCE2EA; --paper:#FFFFFF;
+    --wash:#F5F7FA; --wash-2:#EDF1F6;
+    --blue:#0B62C4; --cyan:#0E7C94; --green:#0A6B4B; --gold:#8A6206; --signal:#C8102E;
+    --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+    --body:'Inter Tight','Helvetica Neue',Arial,sans-serif;
+    --disp:'Fraunces',Georgia,'Times New Roman',serif;
+  }
+  @page{ size:A4; margin:19mm 17mm 20mm; }
+  @page:first{ margin:0; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);font-size:9.9pt;line-height:1.55;
+       -webkit-print-color-adjust:exact;print-color-adjust:exact;background:var(--paper)}
+
+  /* ---------- cover ---------- */
+  .cover{height:297mm;width:100%;padding:34mm 24mm 22mm;display:flex;flex-direction:column;
+         background:#06090F;color:#F4F7FB;page-break-after:always;position:relative;overflow:hidden}
+  .cover .rule{width:56px;height:3px;background:#0E9EEA;margin-bottom:22mm}
+  .cover .kicker{font-family:var(--mono);font-size:8.5pt;letter-spacing:.24em;text-transform:uppercase;color:#6FC3E8;margin:0 0 9mm}
+  .cover h1{font-family:var(--disp);font-weight:600;font-size:36pt;line-height:1.04;margin:0 0 7mm;letter-spacing:-.015em;max-width:150mm}
+  .cover .sub{font-size:13pt;line-height:1.45;color:#AFBDCE;max-width:126mm;margin:0 0 auto;font-weight:400}
+  .cover .sub b{color:#F4F7FB;font-weight:500}
+  .cover .meta{display:flex;gap:16mm;flex-wrap:wrap;font-family:var(--mono);font-size:8.5pt;
+               color:#8496AB;border-top:1px solid #1E2836;padding-top:6mm;margin-top:14mm}
+  .cover .meta b{display:block;color:#F4F7FB;font-weight:500;margin-top:2px;font-size:9pt}
+  .cover .glow{position:absolute;right:-70mm;top:-40mm;width:190mm;height:190mm;border-radius:50%;
+               background:radial-gradient(circle,rgba(14,158,234,.17),transparent 62%)}
+
+  /* ---------- structure ---------- */
+  h2{font-family:var(--disp);font-weight:600;font-size:16pt;line-height:1.2;margin:0 0 1.5mm;
+     letter-spacing:-.01em;color:var(--ink);break-after:avoid;break-inside:avoid}
+  /* A heading plus its lede must travel together, or a section label strands
+     at the foot of a page with its title overleaf. */
+  h2 + .lede, h2 + p{break-before:avoid}
+  h2 .n{font-family:var(--mono);font-size:8.5pt;color:var(--blue);letter-spacing:.14em;
+        display:block;font-weight:500;margin-bottom:2.5mm;text-transform:uppercase}
+  h3{font-family:var(--mono);font-size:8pt;letter-spacing:.14em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;margin:7mm 0 2.5mm;break-after:avoid}
+  section{margin-bottom:9mm;break-inside:auto}
+  .lede{font-size:11pt;line-height:1.5;color:var(--ink-2);margin:0 0 4mm;max-width:158mm}
+  p{margin:0 0 3mm;max-width:158mm}
+  strong{font-weight:600}
+  .mono{font-family:var(--mono);font-size:8.6pt}
+  em.t{font-style:normal;font-family:var(--mono);font-size:8.6pt;color:var(--cyan);
+       background:var(--wash-2);padding:0 3px;border-radius:2px}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:9pt;margin:0 0 3mm;break-inside:avoid}
+  th{text-align:left;font-family:var(--mono);font-size:7.4pt;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;padding:0 6px 2mm;border-bottom:1.5px solid var(--ink)}
+  td{padding:2.3mm 6px;border-bottom:.6px solid var(--rule);vertical-align:top;line-height:1.45}
+  td:first-child{color:var(--ink);font-weight:500;width:30%}
+  tr:last-child td{border-bottom:0}
+  table.tri td:first-child{width:24%}
+  table.tri td:nth-child(2){width:30%;font-family:var(--mono);font-size:8.3pt;color:var(--cyan)}
+
+  /* ---------- blocks ---------- */
+  .note{background:var(--wash);border-left:3px solid var(--gold);padding:4mm 5mm;margin:0 0 6mm;
+        font-size:9.2pt;line-height:1.5;break-inside:avoid}
+  .note b.h{display:block;font-family:var(--mono);font-size:7.6pt;letter-spacing:.14em;text-transform:uppercase;
+            color:var(--gold);margin-bottom:2mm}
+  .note p{margin:0 0 2mm;max-width:none}
+  .note p:last-child{margin:0}
+
+  .pull{border:.8px solid var(--rule);border-left:3px solid var(--signal);background:var(--wash);
+        padding:4.5mm 5mm;margin:1mm 0 5mm;break-inside:avoid;display:flex;gap:7mm;align-items:flex-start}
+  .pull .fig{font-family:var(--mono);font-size:21pt;line-height:1;color:var(--signal);font-weight:500;white-space:nowrap}
+  .pull .fig span{display:block;font-size:7pt;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:2mm}
+  .pull p{margin:0;font-size:9.3pt;max-width:none}
+
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 4mm}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 3mm 11mm;break-inside:avoid;max-width:158mm}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:6.5mm;height:6.5mm;
+       border-radius:50%;background:var(--blue);color:#fff;font-family:var(--mono);font-size:8pt;
+       display:flex;align-items:center;justify-content:center;font-weight:500}
+  ol.steps li b{display:block;font-weight:600;margin-bottom:.6mm}
+
+  ul.plain{list-style:none;padding:0;margin:0 0 4mm}
+  ul.plain li{position:relative;padding:0 0 2.6mm 5mm;max-width:158mm;break-inside:avoid}
+  ul.plain li::before{content:'';position:absolute;left:0;top:2.1mm;width:2mm;height:2mm;background:var(--blue)}
+  ul.plain li b{font-weight:600}
+
+  .flow{width:100%;margin:2mm 0 4mm;break-inside:avoid}
+  .status{display:inline-block;font-family:var(--mono);font-size:7.2pt;letter-spacing:.1em;
+          text-transform:uppercase;padding:1px 5px;border-radius:2px;font-weight:500;white-space:nowrap}
+  .st-live{background:#E3F3EA;color:var(--green)}
+  .st-next{background:#FDF1DC;color:var(--gold)}
+  .st-gate{background:#FBE4E8;color:var(--signal)}
+  .st-ver{background:var(--wash-2);color:var(--ink-3)}
+
+  hr{border:0;border-top:.8px solid var(--rule);margin:8mm 0}
+  .brk{page-break-before:always}
+  .foot{font-family:var(--mono);font-size:7.6pt;color:var(--ink-3);border-top:.8px solid var(--rule);
+        padding-top:3mm;margin-top:8mm}
+</style></head><body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="glow"></div>
+  <div class="rule"></div>
+  <p class="kicker">Architecture and Positioning Brief</p>
+  <h1>Decision Rehearsal Infrastructure</h1>
+  <p class="sub">TACTIK AI and SynerGIA build digital replicas of real counterparties using proprietary Cognitive DNA, put a human across the table from them in real time, and return an auditable dossier on how the human performed. <b>Not a chatbot that pleases you. A counterparty that tests you.</b></p>
+  <div class="meta">
+    <div>Principal<b>Santiago Maspons</b></div>
+    <div>Platforms<b>TACTIK AI &middot; TACTIK EDU &middot; SynerGIA</b></div>
+    <div>Presence layer<b>Tavus Conversational Video</b></div>
+    <div>Date<b>22 September 2026</b></div>
+  </div>
+</div>
+
+<!-- ============ EDITORIAL NOTE ============ -->
+<section>
+  <div class="note">
+    <b class="h">Editorial note</b>
+    <p>This brief is a corrected edition of a summary produced by a third-party language model. That draft captured the strategic thesis well and its description of the Tavus presence layer was substantially accurate. Three material errors have been removed.</p>
+    <p><strong>The identifier was misread.</strong> The string <span class="mono">claude/tactik-dna-persona-integration-h5a75s</span> is a Git development branch in the tactikai.org repository, not a runtime token, deployment hash or API configuration value. The suffix is a randomly generated branch discriminator and carries no meaning. It is never invoked, compiled or applied to a session.</p>
+    <p><strong>There is no identity-verification integration.</strong> The draft read the word "persona" as Persona, the identity infrastructure company, and described an identity-verification pipeline passing verified user attributes into system prompts. No such component exists in this stack. In TACTIK, a persona is a modelled counterparty generated from Cognitive DNA. The draft's sample JSON payload, including the fields <span class="mono">integration_hash</span> and <span class="mono">system_prompt_dna</span>, was invented and corresponds to nothing in the codebase.</p>
+    <p><strong>Unverified claims have been separated out.</strong> Assertions about cryptographic session anchoring, commercial engagements and third-party research have been moved to the appendix and marked for verification rather than stated as fact. Section 12 lists them.</p>
+  </div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section>
+  <h2><span class="n">Section 01</span>The stack in one page</h2>
+  <p class="lede">Three layers, each replaceable, each doing one job. The value concentrates in the first and the last.</p>
+
+  <svg class="flow" viewBox="0 0 520 176" role="img" aria-label="Three-layer stack: Cognitive DNA supplies behaviour, Claude supplies reasoning, Tavus supplies presence, and the TACTIK ledger and debrief close the loop.">
+    <g font-family="Inter Tight, sans-serif">
+      <rect x="0" y="0" width="160" height="64" rx="3" fill="#F5F7FA" stroke="#0B62C4" stroke-width="1.2"/>
+      <text x="12" y="19" font-family="JetBrains Mono, monospace" font-size="7" fill="#0B62C4" letter-spacing="1.1">LAYER 1 &#183; TACTIK</text>
+      <text x="12" y="36" font-size="10.5" font-weight="600" fill="#101722">Cognitive DNA</text>
+      <text x="12" y="51" font-size="8" fill="#3C4757">Behaviour, red lines, thresholds</text>
+
+      <rect x="180" y="0" width="160" height="64" rx="3" fill="#F5F7FA" stroke="#DCE2EA" stroke-width="1.2"/>
+      <text x="192" y="19" font-family="JetBrains Mono, monospace" font-size="7" fill="#6B7789" letter-spacing="1.1">LAYER 2 &#183; CLAUDE</text>
+      <text x="192" y="36" font-size="10.5" font-weight="600" fill="#101722">Reasoning</text>
+      <text x="192" y="51" font-size="8" fill="#3C4757">What the counterparty says</text>
+
+      <rect x="360" y="0" width="160" height="64" rx="3" fill="#F5F7FA" stroke="#DCE2EA" stroke-width="1.2"/>
+      <text x="372" y="19" font-family="JetBrains Mono, monospace" font-size="7" fill="#6B7789" letter-spacing="1.1">LAYER 3 &#183; TAVUS</text>
+      <text x="372" y="36" font-size="10.5" font-weight="600" fill="#101722">Presence</text>
+      <text x="372" y="51" font-size="8" fill="#3C4757">Face, voice, turn-taking</text>
+
+      <path d="M160 32 L178 32" stroke="#6B7789" stroke-width="1"/>
+      <path d="M172 28 L178 32 L172 36 z" fill="#6B7789"/>
+      <path d="M340 32 L358 32" stroke="#6B7789" stroke-width="1"/>
+      <path d="M352 28 L358 32 L352 36 z" fill="#6B7789"/>
+
+      <path d="M440 64 L440 88 L80 88 L80 106" fill="none" stroke="#6B7789" stroke-width="1"/>
+      <path d="M76 100 L80 106 L84 100 z" fill="#6B7789"/>
+
+      <rect x="0" y="106" width="340" height="58" rx="3" fill="#06090F"/>
+      <text x="12" y="124" font-family="JetBrains Mono, monospace" font-size="7" fill="#6FC3E8" letter-spacing="1.1">LAYER 1 CLOSES THE LOOP</text>
+      <text x="12" y="141" font-size="10.5" font-weight="600" fill="#F4F7FB">Ledger and executive debrief</text>
+      <text x="12" y="156" font-size="8" fill="#AFBDCE">Turn-indexed, quote-backed, scored</text>
+
+      <text x="360" y="126" font-size="8.5" fill="#3C4757">Anyone can rent layers 2 and 3.</text>
+      <text x="360" y="140" font-size="8.5" font-weight="600" fill="#101722">Layer 1 is the company.</text>
+    </g>
+  </svg>
+
+  <p>Claude supplies reasoning. Tavus supplies presence. Both are commodity inputs available to any competitor at list price. What cannot be rented is a quantified behavioural model of a specific counterparty and an adjudication engine that scores a human against it. That is the whole business, and it sits at both ends of the pipeline.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section>
+  <h2><span class="n">Section 02</span>Component breakdown</h2>
+  <table class="tri">
+    <thead><tr><th>Component</th><th>What it actually is</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td>Cognitive DNA</td><td>Supabase schema plus generation pipeline</td><td>A canonical behavioural profile of a real person, institution or archetype. Synthesises speeches, filings, past decisions, communication syntax, cultural context and negotiation doctrine into quantified parameters: reservation thresholds, concession decay, friction level, red lines.</td></tr>
+      <tr><td>Claude</td><td>Reasoning engine behind the persona</td><td>Generates what the counterparty says, bound to the DNA parameters rather than to a generic instruction such as "act like a tough buyer".</td></tr>
+      <tr><td>Tavus PAL</td><td>Conversational video interface</td><td>Renders the persona as a photorealistic replica that speaks, listens, watches and takes turns in real time.</td></tr>
+      <tr><td>SynerGIA</td><td>Simulation and moderation layer</td><td>Company against institution scenarios. The operator controls friction, archetype, private context and red lines as live variables.</td></tr>
+      <tr><td>The ledger</td><td>Postgres table written during the session</td><td>Turn-indexed, quote-backed record of every offer, concession and red-line contact. The evidentiary basis of the debrief.</td></tr>
+    </tbody>
+  </table>
+  <p>The persona is not a costume placed over a general assistant. Its decision behaviour is bound to numeric parameters held server side, and the debrief scores the human against those same parameters. That binding is what makes the output defensible rather than impressionistic.</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="brk">
+  <h2><span class="n">Section 03</span>What the pipeline does</h2>
+  <ol class="steps">
+    <li><b>Compiles the DNA in two directions</b>One DNA record produces two artefacts. A phenotype goes to the video vendor and carries no reservation values. An arbiter genome stays in the database and carries every threshold. A trainee who tries to extract the counterparty's walk-away number from the replica reaches a persona that knows its limits qualitatively and never numerically.</li>
+    <li><b>Charges the replica</b>Red lines become native vendor guardrails with callbacks. Negotiation phases become objectives that emit structured values. Friction compiles into turn-taking behaviour rather than prompt wording.</li>
+    <li><b>Adjudicates every turn</b>TACTIK does not generate the replica's speech. It observes each utterance, extracts quantified offers deterministically, and writes the ledger while the session is still running.</li>
+    <li><b>Returns the dossier</b>Six scored axes, a leverage trajectory, a concession curve, red-line status for both sides, and a counterfactual comparison against an optimal line.</li>
+  </ol>
+</section>
+
+<!-- ============ 4 ============ -->
+<section>
+  <h2><span class="n">Section 04</span>The role of Tavus</h2>
+  <p class="lede">Tavus is the human layer. It converts text into a presence that a negotiator's body reacts to.</p>
+  <p>A text simulation can test reasoning. It cannot apply physiological pressure, and pressure is where negotiators actually fail. Tavus closes that gap with three model families running in a synchronised real-time pipeline.</p>
+  <table class="tri">
+    <thead><tr><th>Function</th><th>Model layer</th><th>What it contributes</th></tr></thead>
+    <tbody>
+      <tr><td>Rendering</td><td>phoenix-4 / 4.5</td><td>High frame-rate facial generation with micro-expressions, eye contact and accurate lip synchronisation, rather than pre-recorded animation loops.</td></tr>
+      <tr><td>Perception</td><td>raven-1</td><td>Processes the participant's tone, gaze, hesitation and expression in real time. A counterparty that can see you flinch is a fundamentally different training instrument.</td></tr>
+      <tr><td>Turn-taking</td><td>sparrow-2</td><td>Manages conversational rhythm and interruption without push-to-talk or dead air.</td></tr>
+      <tr><td>Constraint</td><td>guardrails</td><td>Strictly enforced behavioural boundaries with webhook callbacks, so a red-line contact reaches TACTIK the instant it happens.</td></tr>
+      <tr><td>Structure</td><td>objectives</td><td>Phase-based goals with declared output variables, posted to TACTIK as each phase completes.</td></tr>
+      <tr><td>Continuity</td><td>memories</td><td>The counterparty remembers the trainee across sessions.</td></tr>
+    </tbody>
+  </table>
+  <h3>The mapping that matters most</h3>
+  <p>TACTIK's friction calibration runs one to four. Level four compiles to <em class="t">pal_interruptibility: low</em> and <em class="t">turn_taking_patience: low</em>. The counterparty talks over the trainee and refuses to be talked over. Friction stops being a number in a prompt and becomes a property of the conversation itself. That single configuration decision is most of the product experience.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section>
+  <h2><span class="n">Section 05</span>Value added to TACTIK AI and SynerGIA</h2>
+  <ul class="plain">
+    <li><b>It removes the text bottleneck from strategic rehearsal.</b> TACTIK exists to challenge a user's reasoning rather than to serve answers. Delivered as text, that challenge is an intellectual exercise. Delivered by a replica that holds eye contact and cuts in when the trainee hedges, it becomes a rehearsal with consequences.</li>
+    <li><b>It gives SynerGIA the multimodal signal it was designed around.</b> SynerGIA adapts to a trainee's psychological state. The perception layer supplies the inputs that adaptation requires: vocal inflection, visible hesitation, composure under pressure.</li>
+    <li><b>It makes the boardroom legible.</b> TACTIK already spins up competing personas with distinct objective functions. Rendering each as a distinct replica converts a wall of parallel text into a meeting a human can actually read.</li>
+    <li><b>It changes the revenue shape.</b> Observation is episodic: one deal, one simulation, one invoice. Rehearsal is habitual: repetitions, cohorts, certification, a score that has to improve. This is the difference between being bought once and being renewed.</li>
+  </ul>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="brk">
+  <h2><span class="n">Section 06</span>The moat</h2>
+  <p class="lede">Four defensible positions. Only the first is commonly understood, and the fourth is the one competitors cannot reach at any price.</p>
+  <table>
+    <thead><tr><th>Layer</th><th>Why it holds</th></tr></thead>
+    <tbody>
+      <tr><td>Cognitive DNA</td><td>A quantified behavioural profile built from multi-source research on a specific counterparty. Not a prompt. Competitors ship generic archetypes because building and maintaining canonical profiles is slow, expensive domain work.</td></tr>
+      <tr><td>Dual compilation</td><td>Reservation values never leave the database. The replica can be interrogated, flattered or social-engineered and still cannot disclose a number it was never given. This is a structural property, not a prompt instruction.</td></tr>
+      <tr><td>Sovereign adjudication</td><td>The vendor decides what the counterparty says. TACTIK decides what it believes, what it will not do, and what it meant. Swapping video vendors costs nothing because the scoring authority was never delegated.</td></tr>
+      <tr><td>Counterfactual scoring</td><td>Because the DNA is deterministic, the same scenario can be replayed against the same counterparty with an optimal line, at zero marginal cost, and the two outcomes diffed. This requires owning both an autonomous engine and a deterministic behavioural model. Roleplay vendors have neither. Video vendors have rendering without behaviour.</td></tr>
+    </tbody>
+  </table>
+  <p>The fourth row is worth stating plainly, because it is the sentence that sells the product. A competitor can show a buyer that they negotiated. TACTIK can show a buyer <strong>what the better line was, against this specific counterparty, and exactly which turn cost them the money.</strong></p>
+</section>
+
+<!-- ============ 7 ============ -->
+<section>
+  <h2><span class="n">Section 07</span>The debrief</h2>
+  <p class="lede">An after-action review built on evidence rather than recollection. No scored row exists without a verbatim quote behind it.</p>
+  <p>The ledger is written during the session, not reconstructed afterwards. That distinction is the difference between a defensible assessment and a plausible narrative, and it is the failure mode most competing products have not solved.</p>
+  <table>
+    <thead><tr><th>Axis</th><th>Weight</th><th>What it measures</th></tr></thead>
+    <tbody>
+      <tr><td>Red-line integrity</td><td class="mono">30%</td><td>Whether any offer crossed the trainee's own declared floor. The only axis with a hard commercial consequence. A breach caps the composite regardless of every other score.</td></tr>
+      <tr><td>Concession discipline</td><td class="mono">25%</td><td>Decay ratio. Whether each concession was smaller than the last. The strongest single predictor of a lost negotiation.</td></tr>
+      <tr><td>Anchor discipline</td><td class="mono">15%</td><td>Whether the trainee anchored first, and whether they diagnosed the counterparty's mandate before pricing against it.</td></tr>
+      <tr><td>Information ratio</td><td class="mono">15%</td><td>Questions asked against assertions made. Who extracted and who broadcast.</td></tr>
+      <tr><td>Pressure composure</td><td class="mono">15%</td><td>Concessions made within two turns of a pressure event. The reflex that rehearsal exists to remove.</td></tr>
+      <tr><td>Behavioural adherence</td><td class="mono">not scored</td><td>How closely the replica tracked the curve its DNA projected. This scores the build, not the trainee. If the replica drifted, the rehearsal happened against a counterparty that does not exist and the trainee's score is void.</td></tr>
+    </tbody>
+  </table>
+  <p>Quarantining the sixth axis from the composite is a deliberate choice. It is the measure that tells an enterprise buyer the vendor is willing to publish its own failure rate.</p>
+
+  <h3>What this surfaces in practice</h3>
+  <div class="pull">
+    <div class="fig">3.90<span>trainee closed at</span></div>
+    <div class="fig" style="color:var(--ink)">4.00<span>already on the table</span></div>
+    <p>From a reference session against a friction-four procurement profile. At turn eight the counterparty offered four dollars per box. At turn nine the trainee proposed three ninety to close, accepting worse than the standing offer and crossing their own floor to do it. No post-session summary would surface that. A turn-indexed ledger surfaces it automatically, with both quotations attached.</p>
+  </div>
+  <p>Against the same profile, an optimal line closed at four thirty-five. The difference is forty-five cents per box, which on a 2,400 tonne contract at 18.14 kilograms per box is roughly 132,300 boxes and approximately 59,500 US dollars, scaling linearly with volume. The counterfactual run costs nothing to produce.</p>
+</section>
+
+<!-- ============ 8 ============ -->
+<section class="brk">
+  <h2><span class="n">Section 08</span>Bringing in spectators</h2>
+  <p class="lede">Sessions render as standard real-time video, so audience scale is a distribution problem rather than an architecture problem.</p>
+  <ul class="plain">
+    <li><b>Immediate: screen share.</b> The negotiator joins a standard conference call and shares the browser tab. The audio checkbox is not optional. The vocal nuance is a large part of what observers are there to read, and without it they are watching a silent film of a negotiation.</li>
+    <li><b>Production: a media participant.</b> The orchestration layer places an automated participant into a scheduled meeting and pipes the session feed in as its own video tile. Observers sit in the room, watch, and submit strategic pivots through the chat channel without interrupting the session.</li>
+  </ul>
+  <p>The second approach is what a formal executive debrief needs, because it removes the negotiator's own machine as a single point of failure and produces a clean recording aligned to the ledger timestamps.</p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section>
+  <h2><span class="n">Section 09</span>Roadmap and the real bottleneck</h2>
+  <table>
+    <thead><tr><th>Capability</th><th>Status</th><th>Gate</th></tr></thead>
+    <tbody>
+      <tr><td>Replica against replica, text</td><td><span class="status st-live">Built</span></td><td>Runs at zero cost in Turbo mode. Also serves as the counterfactual benchmark.</td></tr>
+      <tr><td>Cognitive DNA persistence and session state</td><td><span class="status st-live">Built</span></td><td>Full database persistence for personas, positions and history.</td></tr>
+      <tr><td>Provider-agnostic video routing</td><td><span class="status st-live">Built</span></td><td>Driver architecture with a zero-cost local driver for testing.</td></tr>
+      <tr><td>Human against replica, text rehearsal</td><td><span class="status st-next">Next</span></td><td>The real milestone. Ledger, axes, counterfactual and dossier all work here before a single GPU minute is spent.</td></tr>
+      <tr><td>Human against replica, live video</td><td><span class="status st-gate">Gated</span></td><td>Requires the credential broker and deterministic teardown to land first. Release gate is 95th-percentile reply latency under 1.2 seconds.</td></tr>
+      <tr><td>Replica against replica, dual video</td><td><span class="status st-gate">Gated</span></td><td>Blocked on turn-taking between two synthetic participants, described below.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Why two replicas cannot simply be pointed at each other</h3>
+  <p>A turn-detection model is trained on human speech patterns. Point replica A at replica B and the stream's own compression latency lands inside the window the model uses to judge whether a pause is a handover or an interruption. The two either talk over each other or deadlock in mutual listening.</p>
+  <p>The resolution is to stop treating them as two participants in a call. A single orchestrator determines the dialogue, applies the constraints, and forks the result to two rendering engines concurrently, so turn boundaries are decided upstream rather than negotiated acoustically between two machines. TACTIK already owns that orchestrator, which is why this is an engineering sequence rather than a research problem.</p>
+
+  <h3>The economic constraint, stated honestly</h3>
+  <p>A live video session costs roughly three to five times an autonomous one, because human sessions run longer and bill the trainee's thinking time. Text rehearsal must therefore be the default and video the certification run. The commercial consequence: sell seats for the debrief and meter video minutes separately. The video minute is cost of goods. The debrief is the margin. Conflating the two puts gross margin at the mercy of how long a trainee likes to think.</p>
+</section>
+
+<!-- ============ 10 ============ -->
+<section class="brk">
+  <h2><span class="n">Section 10</span>Who runs it</h2>
+  <p>The platform is built and directed by <strong>Santiago Maspons</strong>, founder and chief executive, and at present its sole engineer. The design authority comes from forty years of international trade and diplomacy, agro-export operations, commodity programmes and international concessions.</p>
+  <p>That background is not biography. It is the reason the behavioural models are specific enough to be worth rehearsing against. A negotiation simulator built by engineers who have never carried a mandate produces personas that behave like software. The friction calibration, the absent-authority mechanic, the nibble at close, the mandate a counterparty cannot exceed without going back for approval: these are observed patterns, not invented ones.</p>
+</section>
+
+<!-- ============ 11 ============ -->
+<section>
+  <h2><span class="n">Section 11</span>The territory this occupies</h2>
+  <p class="lede">Most of the market is building assistants that comply. This is an instrument that resists.</p>
+  <ul class="plain">
+    <li><b>Reasoning simulation rather than prediction.</b> Enterprise models generally behave like forecasters: they deliver a recommendation and a dashboard. TACTIK models opposing constraint sets, each with its own objective function, and forces a different question. Not what will happen, but what would have to be true for this strategy to be wrong.</li>
+    <li><b>Evidence over assurance.</b> A simulation whose conclusions cannot be traced to specific quoted turns is a narrative. The commitment to in-turn, quote-backed ledger rows, and to publishing the replica's own fidelity score, is a commitment to being checkable. That is unusual, and it is what an enterprise buyer will actually test.</li>
+    <li><b>Preserving judgment in junior workforces.</b> If organisations automate every entry-level task, no one accumulates the intuition that spots a trap in a contract. A practice environment where professionals can experience friction safely and build instinct is a structural answer to a problem most firms have not yet named.</li>
+  </ul>
+  <p>The category is narrow and the buyers are few, but the position is defensible in a way that a productivity wrapper is not. The work now is sequencing: land the credential and teardown items, prove the full dossier at zero cost in text, then spend GPU minutes only on the runs that carry a certification.</p>
+</section>
+
+<!-- ============ 12 ============ -->
+<section class="brk">
+  <h2><span class="n">Section 12</span>Appendix: claims requiring verification</h2>
+  <p class="lede">These appeared in the source draft as statements of fact. Each is either unverified or not present in the current codebase. Confirm or remove before external use.</p>
+  <table>
+    <thead><tr><th>Claim in the source draft</th><th>Status</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Objectives sealed with a SHA-256 hash before the first turn</td><td><span class="status st-ver">Unverified</span></td><td>Not present in the reviewed code. Attractive and buildable, and consistent with the auditability thesis. State as roadmap until implemented.</td></tr>
+      <tr><td>Ed25519 signatures on every debrief</td><td><span class="status st-ver">Unverified</span></td><td>As above. Cryptographic provenance is a strong differentiator precisely because buyers can test it, which is also why claiming it early is dangerous.</td></tr>
+      <tr><td>Sessions anchored to a Bitcoin timestamp</td><td><span class="status st-ver">Unverified</span></td><td>No evidence in the reviewed code. Verify before any regulated-sector conversation.</td></tr>
+      <tr><td>Engagement with Microsoft</td><td><span class="status st-ver">Unverified</span></td><td>Only you can confirm the nature and stage. Name a counterparty in writing only where a reference is available.</td></tr>
+      <tr><td>MIT research on warmth against ruthlessness in agent negotiation</td><td><span class="status st-ver">Unverified</span></td><td>Cite the paper and year, or drop the reference. An unsourced study attribution is the easiest claim in a brief to falsify.</td></tr>
+      <tr><td>Public demos available without sign-in, including named URLs</td><td><span class="status st-ver">Unverified</span></td><td>The source draft asserted specific working links and a live human-against-replica demo. Per the current build, live video is gated. Verify every URL before circulating.</td></tr>
+      <tr><td>Persona identity-verification integration</td><td><span class="status st-gate">Incorrect</span></td><td>Removed. No such integration exists. See the editorial note.</td></tr>
+      <tr><td>Branch name as a runtime configuration token</td><td><span class="status st-gate">Incorrect</span></td><td>Removed. It is a Git branch. See the editorial note.</td></tr>
+    </tbody>
+  </table>
+  <p>Nothing here weakens the thesis. The moat argument in section six rests entirely on capabilities that exist: the Cognitive DNA schema, dual compilation, sovereign adjudication and the counterfactual run. The cryptographic claims would strengthen an already sound position, which is a good reason to build them and a poor reason to assert them early.</p>
+
+  <p class="foot">Prepared for Santiago Maspons &middot; corrected edition of a third-party summary &middot; technical statements verified against the reference implementation on branch claude/tactik-dna-persona-integration &middot; 22 September 2026</p>
+</section>
+
+</body></html>
