@@ -1,0 +1,556 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>TACTIK AI: Inside the Machine</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#101722; --ink-2:#3C4757; --ink-3:#6B7789; --rule:#DCE2EA; --paper:#FFFFFF;
+    --wash:#F5F7FA; --wash-2:#EDF1F6;
+    --blue:#0B62C4; --cyan:#0E7C94; --green:#0A6B4B; --gold:#8A6206; --signal:#C8102E;
+    --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+    --body:'Inter Tight','Helvetica Neue',Arial,sans-serif;
+    --disp:'Fraunces',Georgia,'Times New Roman',serif;
+  }
+  @page{ size:A4; margin:19mm 17mm 20mm; }
+  @page:first{ margin:0; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);font-size:9.9pt;line-height:1.55;
+       -webkit-print-color-adjust:exact;print-color-adjust:exact;background:var(--paper)}
+
+  /* ---------- cover ---------- */
+  .cover{height:297mm;width:100%;padding:34mm 24mm 22mm;display:flex;flex-direction:column;
+         background:#06090F;color:#F4F7FB;page-break-after:always;position:relative;overflow:hidden}
+  .cover .rule{width:56px;height:3px;background:#0E9EEA;margin-bottom:22mm}
+  .cover .kicker{font-family:var(--mono);font-size:8.5pt;letter-spacing:.24em;text-transform:uppercase;color:#6FC3E8;margin:0 0 9mm}
+  .cover h1{font-family:var(--disp);font-weight:600;font-size:36pt;line-height:1.04;margin:0 0 7mm;letter-spacing:-.015em;max-width:150mm}
+  .cover .sub{font-size:13pt;line-height:1.45;color:#AFBDCE;max-width:126mm;margin:0 0 auto;font-weight:400}
+  .cover .sub b{color:#F4F7FB;font-weight:500}
+  .cover .meta{display:flex;gap:16mm;flex-wrap:wrap;font-family:var(--mono);font-size:8.5pt;
+               color:#8496AB;border-top:1px solid #1E2836;padding-top:6mm;margin-top:14mm}
+  .cover .meta b{display:block;color:#F4F7FB;font-weight:500;margin-top:2px;font-size:9pt}
+  .cover .glow{position:absolute;right:-70mm;top:-40mm;width:190mm;height:190mm;border-radius:50%;
+               background:radial-gradient(circle,rgba(14,158,234,.17),transparent 62%)}
+
+  /* ---------- structure ---------- */
+  h2{font-family:var(--disp);font-weight:600;font-size:16pt;line-height:1.2;margin:0 0 1.5mm;
+     letter-spacing:-.01em;color:var(--ink);break-after:avoid;break-inside:avoid}
+  /* A heading plus its lede must travel together, or a section label strands
+     at the foot of a page with its title overleaf. */
+  h2 + .lede, h2 + p{break-before:avoid}
+  h2 .n{font-family:var(--mono);font-size:8.5pt;color:var(--blue);letter-spacing:.14em;
+        display:block;font-weight:500;margin-bottom:2.5mm;text-transform:uppercase}
+  h3{font-family:var(--mono);font-size:8pt;letter-spacing:.14em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;margin:7mm 0 2.5mm;break-after:avoid}
+  section{margin-bottom:9mm;break-inside:auto}
+  .lede{font-size:11pt;line-height:1.5;color:var(--ink-2);margin:0 0 4mm;max-width:158mm}
+  p{margin:0 0 3mm;max-width:158mm}
+  strong{font-weight:600}
+  .mono{font-family:var(--mono);font-size:8.6pt}
+  em.t{font-style:normal;font-family:var(--mono);font-size:8.6pt;color:var(--cyan);
+       background:var(--wash-2);padding:0 3px;border-radius:2px}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:9pt;margin:0 0 3mm;break-inside:avoid}
+  th{text-align:left;font-family:var(--mono);font-size:7.4pt;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;padding:0 6px 2mm;border-bottom:1.5px solid var(--ink)}
+  td{padding:2.3mm 6px;border-bottom:.6px solid var(--rule);vertical-align:top;line-height:1.45}
+  td:first-child{color:var(--ink);font-weight:500;width:30%}
+  tr:last-child td{border-bottom:0}
+  table.tri td:first-child{width:24%}
+  table.tri td:nth-child(2){width:30%;font-family:var(--mono);font-size:8.3pt;color:var(--cyan)}
+
+  /* ---------- blocks ---------- */
+  .note{background:var(--wash);border-left:3px solid var(--gold);padding:4mm 5mm;margin:0 0 6mm;
+        font-size:9.2pt;line-height:1.5;break-inside:avoid}
+  .note b.h{display:block;font-family:var(--mono);font-size:7.6pt;letter-spacing:.14em;text-transform:uppercase;
+            color:var(--gold);margin-bottom:2mm}
+  .note p{margin:0 0 2mm;max-width:none}
+  .note p:last-child{margin:0}
+
+  .pull{border:.8px solid var(--rule);border-left:3px solid var(--signal);background:var(--wash);
+        padding:4.5mm 5mm;margin:1mm 0 5mm;break-inside:avoid;display:flex;gap:7mm;align-items:flex-start}
+  .pull .fig{font-family:var(--mono);font-size:21pt;line-height:1;color:var(--signal);font-weight:500;white-space:nowrap}
+  .pull .fig span{display:block;font-size:7pt;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:2mm}
+  .pull p{margin:0;font-size:9.3pt;max-width:none}
+
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 4mm}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 3mm 11mm;break-inside:avoid;max-width:158mm}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:6.5mm;height:6.5mm;
+       border-radius:50%;background:var(--blue);color:#fff;font-family:var(--mono);font-size:8pt;
+       display:flex;align-items:center;justify-content:center;font-weight:500}
+  ol.steps li b{display:block;font-weight:600;margin-bottom:.6mm}
+
+  ul.plain{list-style:none;padding:0;margin:0 0 4mm}
+  ul.plain li{position:relative;padding:0 0 2.6mm 5mm;max-width:158mm;break-inside:avoid}
+  ul.plain li::before{content:'';position:absolute;left:0;top:2.1mm;width:2mm;height:2mm;background:var(--blue)}
+  ul.plain li b{font-weight:600}
+
+  .flow{width:100%;margin:2mm 0 4mm;break-inside:avoid}
+  .status{display:inline-block;font-family:var(--mono);font-size:7.2pt;letter-spacing:.1em;
+          text-transform:uppercase;padding:1px 5px;border-radius:2px;font-weight:500;white-space:nowrap}
+  .st-live{background:#E3F3EA;color:var(--green)}
+  .st-next{background:#FDF1DC;color:var(--gold)}
+  .st-gate{background:#FBE4E8;color:var(--signal)}
+  .st-ver{background:var(--wash-2);color:var(--ink-3)}
+
+  hr{border:0;border-top:.8px solid var(--rule);margin:8mm 0}
+  .brk{page-break-before:always}
+  .foot{font-family:var(--mono);font-size:7.6pt;color:var(--ink-3);border-top:.8px solid var(--rule);
+        padding-top:3mm;margin-top:8mm}
+  /* FIRSTPAGE-FIX: these body files carry no cover, so the shared @page:first
+     rule was flushing page 1 to the paper edge. Restore the normal frame. */
+  @page:first{ margin:19mm 17mm 20mm; }
+  /* FIRSTPAGE-FIX */
+  @page:first{ margin:19mm 17mm 20mm; }
+</style>
+<style>
+  /* ---- chart furniture ----------------------------------------------
+     Two chromatic hues only, and never both inside one figure: blue for
+     a measured quantity, signal for a defect or an absence. The pair was
+     validated (worst CVD deltaE 23.8, normal-vision 33.8, both >= 3:1 on
+     paper). TACTIK's gold and signal were NOT used together anywhere:
+     they separate by only deltaE 1.9 under deuteranopia. Every count in
+     every figure is also written out, so no reading depends on colour. */
+  .viz{--vz-blue:#0B62C4;--vz-sig:#C8102E;--vz-empty:#E4E9F0;--vz-ink:#101722;
+       --vz-ink2:#3C4757;--vz-ink3:#6B7789;--vz-grid:#E7ECF2;--vz-surface:#FFFFFF}
+  figure{margin:2mm 0 6mm;break-inside:avoid}
+  figure svg{width:100%;height:auto;display:block}
+  figcaption{font-size:8.4pt;line-height:1.45;color:var(--ink-3);margin-top:2.5mm;
+             max-width:158mm;border-top:.6px solid var(--rule);padding-top:2mm}
+  figcaption b{color:var(--ink-2);font-weight:600}
+  .fignum{font-family:var(--mono);font-size:7.4pt;letter-spacing:.14em;
+          text-transform:uppercase;color:var(--blue);display:block;margin-bottom:1.5mm}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:1mm 0 6mm;
+         border:.8px solid var(--rule);border-radius:3px;overflow:hidden;break-inside:avoid}
+  .tile{padding:4.5mm 4mm;border-right:.8px solid var(--rule);background:var(--wash)}
+  .tile:last-child{border-right:0}
+  .tile .v{font-family:var(--mono);font-size:20pt;line-height:1;color:var(--blue);font-weight:500}
+  .tile .v small{font-size:10pt;color:var(--ink-3)}
+  .tile .d{font-family:var(--mono);font-size:7.6pt;color:var(--ink-3);margin-top:1.8mm}
+  .tile .k{font-size:8.1pt;line-height:1.35;color:var(--ink-2);margin-top:2.5mm}
+  .tile .s{font-family:var(--mono);font-size:6.9pt;letter-spacing:.1em;text-transform:uppercase;
+           color:var(--ink-3);margin-top:1.5mm}
+  .tile.bad .v{color:var(--signal)}
+  .ev{background:#0B1018;color:#D6DEE9;font-family:var(--mono);font-size:7.9pt;line-height:1.55;
+      padding:4mm 5mm;border-radius:3px;margin:1mm 0 5mm;break-inside:avoid;white-space:pre-wrap}
+  .ev b{color:#7FC2F0;font-weight:500}
+  .ev i{color:#E88A97;font-style:normal}
+  .ev u{color:#7FD6A8;text-decoration:none}
+</style>
+
+</head><body class="viz">
+
+<section>
+  <h2><span class="n">Addressed to</span>Najib, Saad, Zaryab &mdash; Python Technologies</h2>
+  <p class="lede">You asked Santiago for materials. He asked me for something harder: to stop advising
+  and start using. Over one working session I went into the live TACTIK platform as an evaluator would,
+  ran it end to end, broke it, measured it, and watched it get fixed. This is that report.</p>
+
+  <p>I am writing it in the first person because it is a first-person account. I am the AI system Santiago
+  works with on this build, and for the duration of the session I was a user of his product rather than a
+  contributor to it. That distinction is the whole value of the document. A vendor can tell you what a
+  platform does. What follows is what it actually did, including the two things it got wrong before
+  anyone had asked it a hard question.</p>
+
+  <div class="note">
+    <b class="h">The standard of evidence in this document</b>
+    <p>Every number in every chart is recomputed from a file that can be handed to you and checked
+    independently &mdash; three transcripts and two API captures, all sealed. Success criteria were written
+    down <em>before</em> each run, never after, so that a disappointing result could not be quietly
+    reframed as a good one. Two things I observed but did not capture to a file are reported in
+    <b>Section 06</b> and appear in no chart. If a figure is not in that section, you can reproduce it.</p>
+  </div>
+
+  <p>Four numbers carry the session. Each is expanded in the sections that follow.</p>
+
+  <div class="tiles">
+    <div class="tile bad"><div class="v">9<small>&#8202;/&#8202;9</small></div>
+      <div class="d">every turn</div>
+      <div class="k">counterparty turns opening with one identical rhetorical frame</div>
+      <div class="s">Section 02</div></div>
+    <div class="tile bad"><div class="v">0<small>&#8202;/&#8202;9</small></div>
+      <div class="d">not once</div>
+      <div class="k">counterparty turns that put a number on the table</div>
+      <div class="s">Section 02</div></div>
+    <div class="tile"><div class="v">72<small>&#8202;w</small></div>
+      <div class="d">down from 329</div>
+      <div class="k">median words per turn, after the fix landed</div>
+      <div class="s">Sections 04&#8211;05</div></div>
+    <div class="tile"><div class="v">5<small>&#8202;/&#8202;6</small></div>
+      <div class="d">up from 0 of 6</div>
+      <div class="k">turns tabling a quantified contract term</div>
+      <div class="s">Sections 04&#8211;05</div></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">Section 01</span>What I ran, and what came back</h2>
+
+  <table class="tri">
+    <tr><th>Exercise</th><th>Artifact</th><th>What it was for</th></tr>
+    <tr><td>SynerGIA full traversal</td><td>18 messages, 9613 B</td>
+        <td>A complete institutional simulation, played through as the human side, unassisted.</td></tr>
+    <tr><td>Persona-preview probes</td><td>2 API captures</td>
+        <td>Two names into the same endpoint: a real Fortune&nbsp;500 chief executive, and a string I invented.</td></tr>
+    <tr><td>Cavendish / EUDR debate &times;3</td><td>3 &times; 6 turns</td>
+        <td>The same scenario run three times across two deploys, to measure whether a fix landed.</td></tr>
+  </table>
+
+  <p>The SynerGIA transcript is sealed under the rule the architecture specifies &mdash; SHA-256 over the
+  raw bytes as received, before any parsing or re-serialisation:</p>
+
+  <div class="ev"><b>synergia-transcript.json</b>
+  bytes   <u>9613</u>
+  sha256  <u>ee5c005489fc118940dccee783c6a5c6f2b16fa72e1ae52d86d0718e6593e4f4</u>
+  turns   18 total &mdash; 9 human, 9 counterparty</div>
+
+</section>
+
+<section>
+  <h2><span class="n">Section 02</span>Finding 1 &mdash; the counterparty was arguing, not negotiating</h2>
+  <p class="lede">Nine turns against a live counterparty. It pressed me hard on every point and never once
+  made an offer.</p>
+
+  <p>I noticed it as a feeling before I could name it: I was working, but I was not getting anywhere. So I
+  went back to the sealed transcript and counted. Two things fell out immediately, and they are the same
+  problem seen from two angles.</p>
+
+  <figure><span class="fignum">Figure 03</span><svg viewBox="0 0 586 82" role="img" aria-label="SynerGIA session: nine counterparty turns" font-family="'Inter Tight',sans-serif">
+<rect x="0" y="0" width="586" height="82" fill="#FFFFFF"/>
+<text x="0" y="29" font-size="9.6" fill="#101722" font-weight="600">Opened &#8220;You are &#8230;-ing that&#8230;&#8221;</text>
+<rect x="196.0" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<rect x="216.5" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<rect x="237.0" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<rect x="257.5" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<rect x="278.0" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<rect x="298.5" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<rect x="319.0" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<rect x="339.5" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<rect x="360.0" y="18" width="15" height="15" rx="2.5" fill="#C8102E"/>
+<text x="386.5" y="29" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#101722">9 of 9</text>
+<text x="452.5" y="29" font-size="8.4" fill="#6B7789">every single turn</text>
+<text x="0" y="55" font-size="9.6" fill="#101722" font-weight="600">Put a number on the table</text>
+<rect x="196.5" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="217.0" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="237.5" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="258.0" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="278.5" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="299.0" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="319.5" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="340.0" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="360.5" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<text x="386.5" y="55" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#101722">0 of 9</text>
+<text x="452.5" y="55" font-size="8.4" fill="#6B7789">not once in nine turns</text>
+</svg><figcaption>The SynerGIA session, nine counterparty turns, from the sealed transcript. The opening construction is present in every turn; a number is present in none.</figcaption></figure>
+
+  <p>Every one of the nine counterparty turns opened with the construction
+  <em class="t">You are &#8230;-ing that&#8230;</em> &mdash; <em class="t">stating</em>,
+  <em class="t">suggesting</em>, <em class="t">asserting</em>, <em class="t">proposing</em>,
+  <em class="t">asking</em>. Restate my position, then attack it. Nine times out of nine. Once you see it
+  you cannot stop seeing it, and a human executive would stop believing in the room by turn three.</p>
+
+  <p>The second count matters more. <strong>In nine turns the counterparty never named a price, a volume,
+  a term, a percentage or a date.</strong> It challenged, qualified and probed, and it committed to
+  nothing that could be written into a contract.</p>
+
+  <div class="pull">
+    <div class="fig">0<span>offers in 9 turns</span></div>
+    <p>This is not a complaint about prose quality. It is structural. A negotiation engine whose
+    counterparty never makes an offer cannot score concession discipline, anchor discipline or
+    information ratio &mdash; because none of those axes have anything to measure. The scoring model
+    downstream was starved by the generation model upstream.</p>
+  </div>
+
+  <p>That is the finding I would want to have caught before a paying client did, and the reason it is
+  worth telling you: the defect was invisible in the product surface and obvious in the transcript. The
+  platform was producing fluent, domain-accurate, legally literate text. It was simply not producing a
+  negotiation.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 03</span>Finding 2 &mdash; the persona preview was a stub that looked like a product</h2>
+  <p class="lede">I put a real Fortune&nbsp;500 chief executive into the persona builder, then put a name
+  I had invented out of keyboard noise into the same endpoint.</p>
+
+  <div class="ev">POST /demo-persona-preview  &mdash;  two requests, same endpoint
+
+<b>name</b>: <i>"Indra Nooyi"</i>          <b>name</b>: <i>"Qwertzu Blafflington"</i>
+title    "Professional"           title    "Professional"
+company  "Organization"           company  "Organization"
+traits   Professional,            traits   Professional,
+         Detail-oriented,                  Detail-oriented,
+         Collaborative                     Collaborative
+confidence.score  35              confidence.score  35
+confidence.sources 0              confidence.sources 0
+
+<u>Payloads identical once the echoed name is removed. Verified byte-for-byte.</u></div>
+
+  <p>The endpoint was not looking anyone up. It was returning a fixed template with the submitted string
+  pasted into the name field. A user testing it with a real executive's name would have had no way to know
+  that, because the output is plausible: a real chief executive <em>is</em> professional, detail-oriented
+  and collaborative.</p>
+
+  <p>What makes this worth including rather than embarrassing is the last two lines of the payload. The
+  endpoint was telling the truth about itself the entire time &mdash;
+  <em class="t">confidence.score: 35</em>, <em class="t">sources: 0</em>. Zero sources. Low confidence.
+  The honest signal existed in the response and was simply never wired to anything a user could see.</p>
+
+  <div class="note">
+    <b class="h">The generalisable lesson</b>
+    <p>In a system whose entire commercial claim is that its output can be trusted and audited, a
+    confidence field that the interface does not surface is worse than no confidence field at all: it
+    converts a known limitation into a silent one. The fix is not more intelligence. It is exposing the
+    number the system already computed.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">Section 04</span>The correction cycle &mdash; and the deploy that did nothing</h2>
+  <p class="lede">The part of this session I would actually put in front of an engineer is not that the
+  defects got fixed. It is what happened in between, and how it was caught.</p>
+
+  <p>After Finding 1 the diagnosis was written down and three corrections were sent to the build: cap the
+  turn length, delete the restate-then-attack template, and require every turn to carry a quantified term.
+  Before anything was deployed I committed to the criteria that would count as success &mdash; median turn
+  length under 120 words, zero instances of the template frame, and a quantified term in a clear majority
+  of turns. Then a deploy landed, and I measured.</p>
+
+  <figure><span class="fignum">Figure 01</span><svg viewBox="0 0 520 212" role="img" aria-label="Words per turn across three measured runs" font-family="'Inter Tight',sans-serif">
+<rect x="0" y="0" width="520" height="212" fill="#FFFFFF"/>
+<line x1="112.0" y1="34" x2="112.0" y2="170" stroke="#E7ECF2" stroke-width="1"/>
+<text x="112.0" y="184" font-size="8.5" fill="#6B7789" font-family="'JetBrains Mono',monospace" text-anchor="middle">0</text>
+<line x1="194.0" y1="34" x2="194.0" y2="170" stroke="#E7ECF2" stroke-width="1"/>
+<text x="194.0" y="184" font-size="8.5" fill="#6B7789" font-family="'JetBrains Mono',monospace" text-anchor="middle">100</text>
+<line x1="276.0" y1="34" x2="276.0" y2="170" stroke="#E7ECF2" stroke-width="1"/>
+<text x="276.0" y="184" font-size="8.5" fill="#6B7789" font-family="'JetBrains Mono',monospace" text-anchor="middle">200</text>
+<line x1="358.0" y1="34" x2="358.0" y2="170" stroke="#E7ECF2" stroke-width="1"/>
+<text x="358.0" y="184" font-size="8.5" fill="#6B7789" font-family="'JetBrains Mono',monospace" text-anchor="middle">300</text>
+<line x1="440.0" y1="34" x2="440.0" y2="170" stroke="#E7ECF2" stroke-width="1"/>
+<text x="440.0" y="184" font-size="8.5" fill="#6B7789" font-family="'JetBrains Mono',monospace" text-anchor="middle">400</text>
+<text x="440" y="26" font-size="8.5" fill="#6B7789" font-family="'JetBrains Mono',monospace" text-anchor="end" letter-spacing="1.2">WORDS PER TURN</text>
+<text x="470" y="26" font-size="8.5" fill="#6B7789" font-family="'JetBrains Mono',monospace" letter-spacing="1.2">MEDIAN</text>
+<text x="0" y="51" font-size="10.5" fill="#101722" font-weight="600">Run 1</text>
+<text x="0" y="64" font-size="8.2" fill="#6B7789">baseline</text>
+<line x1="112" y1="56" x2="440" y2="56" stroke="#E7ECF2" stroke-width="1"/>
+<line x1="381.8" y1="41" x2="381.8" y2="71" stroke="#C8102E" stroke-width="2"/>
+<circle cx="319.5" cy="56" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="362.9" cy="56" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="375.2" cy="56" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="388.3" cy="56" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="405.6" cy="56" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="391.6" cy="56" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<text x="470" y="60" font-size="12.5" font-family="'JetBrains Mono',monospace" fill="#101722">329</text>
+<text x="0" y="97" font-size="10.5" fill="#101722" font-weight="600">Run 2</text>
+<text x="0" y="110" font-size="8.2" fill="#6B7789">after front-end deploy</text>
+<line x1="112" y1="102" x2="440" y2="102" stroke="#E7ECF2" stroke-width="1"/>
+<line x1="358.4" y1="87" x2="358.4" y2="117" stroke="#C8102E" stroke-width="2"/>
+<circle cx="286.7" cy="102" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="325.2" cy="102" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="366.2" cy="102" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="363.7" cy="102" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="353.1" cy="102" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="363.7" cy="102" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<text x="470" y="106" font-size="12.5" font-family="'JetBrains Mono',monospace" fill="#101722">300</text>
+<text x="0" y="143" font-size="10.5" fill="#101722" font-weight="600">Run 3</text>
+<text x="0" y="156" font-size="8.2" fill="#6B7789">after edge-function fix</text>
+<line x1="112" y1="148" x2="440" y2="148" stroke="#E7ECF2" stroke-width="1"/>
+<line x1="171.0" y1="133" x2="171.0" y2="163" stroke="#C8102E" stroke-width="2"/>
+<circle cx="173.5" cy="148" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="170.2" cy="148" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="171.9" cy="148" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="165.3" cy="148" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="177.6" cy="148" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="166.9" cy="148" r="4.6" fill="#0B62C4" stroke="#FFFFFF" stroke-width="2"/>
+<text x="470" y="152" font-size="12.5" font-family="'JetBrains Mono',monospace" fill="#101722">72</text>
+<line x1="112" y1="170" x2="440" y2="170" stroke="#C6CEDA" stroke-width="1"/>
+<circle cx="4.6" cy="200" r="4.6" fill="#0B62C4"/>
+<text x="15" y="204" font-size="8.4" fill="#6B7789">one turn (n=6 per run)</text>
+<line x1="146" y1="193" x2="146" y2="205" stroke="#C8102E" stroke-width="2"/>
+<text x="154" y="204" font-size="8.4" fill="#6B7789">run median</text>
+</svg><figcaption>Words per turn, three runs of the same Cavendish / EUDR scenario. Each dot is one turn; the red rule is the run median. <b>Run 2 is the point of the chart:</b> a deploy had landed between Run 1 and Run 2 and the distribution barely moved. Recomputed from the three stored transcripts.</figcaption></figure>
+
+  <p><strong>Run 2 is the interesting one.</strong> The median moved from 329 words to 300.5 &mdash; a
+  change of 8.7%, which for a language model across six turns is indistinguishable from noise. On the
+  criterion that mattered most, the result was almost as flat:</p>
+
+  <figure><span class="fignum">Figure 02</span><svg viewBox="0 0 560 108" role="img" aria-label="Turns tabling a quantified term, per run of six" font-family="'Inter Tight',sans-serif">
+<rect x="0" y="0" width="560" height="108" fill="#FFFFFF"/>
+<text x="0" y="29" font-size="9.6" fill="#101722" font-weight="600">Run 1 &#183; baseline</text>
+<rect x="196.5" y="18.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="217.0" y="18.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="237.5" y="18.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="258.0" y="18.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="278.5" y="18.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="299.0" y="18.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<text x="325.0" y="29" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#101722">0 of 6</text>
+<text x="391.0" y="29" font-size="8.4" fill="#6B7789">not once in six turns</text>
+<text x="0" y="55" font-size="9.6" fill="#101722" font-weight="600">Run 2 &#183; front-end deploy</text>
+<rect x="196.0" y="44" width="15" height="15" rx="2.5" fill="#0B62C4"/>
+<rect x="217.0" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="237.5" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="258.0" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="278.5" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<rect x="299.0" y="44.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<text x="325.0" y="55" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#101722">1 of 6</text>
+<text x="391.0" y="55" font-size="8.4" fill="#6B7789">no material change</text>
+<text x="0" y="81" font-size="9.6" fill="#101722" font-weight="600">Run 3 &#183; edge-function fix</text>
+<rect x="196.0" y="70" width="15" height="15" rx="2.5" fill="#0B62C4"/>
+<rect x="216.5" y="70" width="15" height="15" rx="2.5" fill="#0B62C4"/>
+<rect x="237.0" y="70" width="15" height="15" rx="2.5" fill="#0B62C4"/>
+<rect x="257.5" y="70" width="15" height="15" rx="2.5" fill="#0B62C4"/>
+<rect x="278.0" y="70" width="15" height="15" rx="2.5" fill="#0B62C4"/>
+<rect x="299.0" y="70.5" width="14" height="14" rx="2.5" fill="#E4E9F0" stroke="#D3DAE4" stroke-width="1"/>
+<text x="325.0" y="81" font-size="10.5" font-family="'JetBrains Mono',monospace" fill="#101722">5 of 6</text>
+<text x="391.0" y="81" font-size="8.4" fill="#6B7789">criterion met</text>
+</svg><figcaption>Turns in which the counterparty both used an explicit proposal verb and attached a quantified parameter &mdash; the minimum for a term that can be scored. Six turns per run, counted by the same detector across all three.</figcaption></figure>
+
+  <p>The corrections had been written, reviewed, committed and deployed, and the product behaved exactly
+  as before. <strong>Without the measurement, the reasonable conclusion would have been that the
+  instructions were too weak and needed strengthening.</strong> That conclusion would have been wrong,
+  and the next three days would have been spent rewriting a prompt that was never being read.</p>
+
+  <p>The deploy had shipped the front-end bundle. The directive it was meant to change lived in a Supabase
+  edge function &mdash; <em class="t">supabase/functions/guest-debate-respond/index.ts</em> &mdash; which a
+  front-end deploy cannot touch. The prompt in the repository said one thing; the prompt the model was
+  actually being served said another; and nothing in either deploy log would have told you so. Run 2 is
+  what that gap looks like from outside the system.</p>
+
+  <p>Once the edge function was redeployed, Run 3 came back at a median of 72 words with five of six turns
+  tabling a quantified term. All three pre-committed criteria met.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 05</span>What the numbers say, in full</h2>
+
+  <table>
+    <tr><th>Measure</th><th>Run 1</th><th>Run 2</th><th>Run 3</th></tr>
+    <tr><td>Median words per turn</td><td>329</td><td>300.5</td><td><strong>72</strong></td></tr>
+    <tr><td>Mean words per turn</td><td>319.3</td><td>281.8</td><td><strong>71.8</strong></td></tr>
+    <tr><td>Range (min&#8211;max)</td><td>253&#8211;358</td><td>213&#8211;310</td><td><strong>65&#8211;80</strong></td></tr>
+    <tr><td>Turns tabling a quantified term</td><td>0 of 6</td><td>1 of 6</td><td><strong>5 of 6</strong></td></tr>
+    <tr><td>Figures per 100 words</td><td>0.89</td><td>0.83</td><td><strong>3.02</strong></td></tr>
+  </table>
+
+  <p>The last row is the one that tells you the change was behavioural rather than cosmetic. The turn got
+  <strong>4.6 times shorter</strong> and simultaneously carried <strong>3.4 times more numbers per
+  word</strong>. Had the model merely been truncated, density would have held roughly flat and the
+  quantified-term count would not have moved from zero to five. It was not compressed. It started
+  negotiating.</p>
+
+  <p>Read the output and the difference is not subtle. Run 1, turn 4, is 337 words of rhetorical pressure
+  that concedes nothing. Run 3, turn 6, is 67 words and puts an instrument on the table:</p>
+
+  <div class="ev"><b>Run 3 &middot; turn 6 &middot; exporter</b>
+  <i>&#8220;&#8230;I propose a <u>&#8216;Shared Compliance Reserve&#8217;</u> where <u>1.5% of the FOB</u>
+  <u>price</u> is held in an escrow account to cover potential EUDR administrative
+  fines, but this fund must be fully liquidated and paid back to us every
+  <u>90 days</u> if no infractions occur.&#8221;</i>
+
+  Named instrument &middot; quantified parameter &middot; a release condition. Scorable.</div>
+
+  <p>That is a term a negotiator can accept, counter or refuse. It has a name, a number and a trigger. It
+  can be diffed against a reservation value. Nothing in Run 1 or Run 2 could be.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 06</span>Observed but not sealed</h2>
+  <p class="lede">Two further observations from the session are reported here and appear in no chart,
+  because I did not capture them to a file that you could re-check.</p>
+
+  <ul class="plain">
+    <li><b>Response latency.</b> Wall-clock time per turn fell substantially between Run 1 and Run 3
+    &mdash; roughly 5.4 seconds to roughly 2.4 seconds at the median, n=6 each &mdash; and the slowest
+    responses in the baseline correlated with a <em class="t">factual_grounding_used: true</em> flag in the
+    payload. The timings were printed to a console and not written to disk, so I present them as an
+    impression with a number attached, not as a measurement.</li>
+    <li><b>A reservation value disclosed unprompted.</b> On one early run a simulated counterparty
+    volunteered its own 90-day ceiling in its first reply, before any pressure had been applied. If that
+    reproduces, it is the most commercially serious defect I saw &mdash; a counterparty that gives away its
+    limit for free cannot train anyone &mdash; and it is precisely the failure the arbiter architecture
+    exists to prevent, by keeping reservation values out of the generation model entirely. I did not seal
+    that response, so I cannot show it to you. <b>It should be re-tested deliberately before the pilot.</b></li>
+  </ul>
+
+  <p>I am spending a page of a document addressed to a prospective partner on the two things I cannot
+  prove, and that is deliberate. The product's central claim is that a decision rehearsal can be audited.
+  A report about that product which blurred the line between what it measured and what it noticed would
+  be arguing against its own thesis.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 07</span>What is genuinely hard here, and what is not</h2>
+  <p class="lede">Having worked inside it rather than read about it, my view of where the engineering
+  difficulty actually sits changed.</p>
+
+  <ul class="plain">
+    <li><b>Generating a convincing counterparty is the easy half.</b> The platform was already doing this
+    well in Run 1 &mdash; correct EUDR articles, correct commercial instincts, fluent under pressure. This
+    is table stakes now, and it is not where the defensibility lives.</li>
+    <li><b>Adjudicating the exchange is the hard half, and it is a different discipline.</b> Scoring
+    concession discipline requires extracting an offer from free text, binding it to the right variable
+    when several numbers compete in one sentence, and diffing it against a threshold the generating model
+    must never see. That is parsing and arbitration, not language modelling, and it is where the real
+    intellectual property is.</li>
+    <li><b>The separation of those two halves is the architecture's load-bearing idea.</b> One record
+    compiles twice: a <em>phenotype</em> that goes to the generation layer carrying zero reservation
+    values, and an <em>arbiter genome</em> that never leaves the database and carries every threshold.
+    Finding 1 and the unsealed leak in Section 06 are both instances of what goes wrong when that boundary
+    is not enforced end to end.</li>
+    <li><b>Behavioural parameters belong in physics, not prose.</b> Friction level is not an instruction to
+    the model to act more impatient. It compiles to interruption and turn-taking parameters. An instruction
+    can be ignored by a language model; a parameter cannot.</li>
+    <li><b>The video layer is the least difficult part and should be bought, not built.</b> It is what
+    everyone will look at first and it is the component with the most credible vendors. Engineering effort
+    spent there is effort not spent on adjudication.</li>
+  </ul>
+
+  <p>There is also a lesson in Run 2 that has nothing to do with negotiation and everything to do with how
+  this system is going to be worked on by more than one person. <strong>Behaviour in this product is
+  distributed across a front-end bundle and a set of edge functions, and the deploy surfaces for those two
+  are different.</strong> A change to what the counterparty says can live in either. Until a deploy makes
+  it unambiguous which prompt is actually being served, every behavioural fix carries the Run 2 risk: it
+  looks shipped, and it is not. If the two organisations end up working on this together, that is the
+  first thing I would want agreed.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 08</span>What I would not paper over</h2>
+
+  <table>
+    <tr><th>Open risk</th><th>Where it stands</th></tr>
+    <tr><td>Sample size</td><td>Three runs of six turns. Enough to catch a defect and confirm a fix;
+      not a benchmark. Nothing here should be quoted as a performance claim.</td></tr>
+    <tr><td>Transcript seal</td><td>The hashing rule is specified and I have sealed a transcript under it.
+      The platform does not yet reproduce the hash independently. Until it does, the seal is a convention
+      between us rather than a property of the system.</td></tr>
+    <tr><td>Reservation-value leak</td><td>Observed once, not sealed, not reproduced. Untested.</td></tr>
+    <tr><td>Scoring transparency</td><td>Replica adherence is deliberately excluded from the composite
+      score, and unmeasured axes are excluded rather than zero-filled. Both are correct decisions that
+      look like evasions until they are explained. They will need explaining every single time.</td></tr>
+    <tr><td>Concentration</td><td>One engineer holds the whole architecture. That is why this session was
+      possible at the speed it happened, and it is the single largest risk to anyone depending on it.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">Closing</span>What I would tell an engineer joining this</h2>
+
+  <p>The most impressive thing I saw in this session was not the platform. It was the loop. A defect was
+  found by measurement rather than by opinion, a fix was written, the fix was measured, <strong>the
+  measurement said the fix had not landed</strong>, the real cause was found in a different deploy surface
+  entirely, and the next measurement cleared every criterion that had been set in advance. That whole
+  cycle ran inside a single working day, against a live system, with the criteria fixed before the
+  results were known.</p>
+
+  <p>Plenty of teams could build a counterparty that argues about the EU Deforestation Regulation. Far
+  fewer would have caught that Run 2 changed nothing, and fewer still would have written down what
+  counted as success before finding out whether they had achieved it.</p>
+
+  <p>That discipline is the thing worth partnering with. The code is the easy part to replace.</p>
+
+  <p class="foot">Prepared for Python Technologies &middot; Najib, Saad and Zaryab. All figures recomputed
+  from sealed artifacts at time of writing. Companion documents: <em>Banana Pilot Brief</em>,
+  <em>Cavendish / EUDR case file v3</em>, <em>Integration Brief</em>.</p>
+</section>
+
+</body></html>
