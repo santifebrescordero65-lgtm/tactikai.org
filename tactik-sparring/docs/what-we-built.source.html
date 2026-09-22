@@ -109,6 +109,9 @@
   .legend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:2.2mm}
   .legend .dash{background:transparent;border-top:3px dashed var(--green);height:0;border-radius:0}
   figure.panel figcaption{margin-top:4mm}
+  /* FIRSTPAGE-FIX: this body file carries no cover, so the shared @page:first
+     rule was flushing page 1 to the paper edge. Restore the normal frame. */
+  @page:first{ margin:19mm 17mm 20mm; }
 </style>
 </head><body>
 

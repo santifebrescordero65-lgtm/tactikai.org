@@ -1,0 +1,266 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>TACTIK AI: Banana Pilot Brief</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#101722; --ink-2:#3C4757; --ink-3:#6B7789; --rule:#DCE2EA; --paper:#FFFFFF;
+    --wash:#F5F7FA; --wash-2:#EDF1F6;
+    --blue:#0B62C4; --cyan:#0E7C94; --green:#0A6B4B; --gold:#8A6206; --signal:#C8102E;
+    --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+    --body:'Inter Tight','Helvetica Neue',Arial,sans-serif;
+    --disp:'Fraunces',Georgia,'Times New Roman',serif;
+  }
+  @page{ size:A4; margin:19mm 17mm 20mm; }
+  @page:first{ margin:0; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);font-size:9.9pt;line-height:1.55;
+       -webkit-print-color-adjust:exact;print-color-adjust:exact;background:var(--paper)}
+
+  /* ---------- cover ---------- */
+  .cover{height:297mm;width:100%;padding:34mm 24mm 22mm;display:flex;flex-direction:column;
+         background:#06090F;color:#F4F7FB;page-break-after:always;position:relative;overflow:hidden}
+  .cover .rule{width:56px;height:3px;background:#0E9EEA;margin-bottom:22mm}
+  .cover .kicker{font-family:var(--mono);font-size:8.5pt;letter-spacing:.24em;text-transform:uppercase;color:#6FC3E8;margin:0 0 9mm}
+  .cover h1{font-family:var(--disp);font-weight:600;font-size:36pt;line-height:1.04;margin:0 0 7mm;letter-spacing:-.015em;max-width:150mm}
+  .cover .sub{font-size:13pt;line-height:1.45;color:#AFBDCE;max-width:126mm;margin:0 0 auto;font-weight:400}
+  .cover .sub b{color:#F4F7FB;font-weight:500}
+  .cover .meta{display:flex;gap:16mm;flex-wrap:wrap;font-family:var(--mono);font-size:8.5pt;
+               color:#8496AB;border-top:1px solid #1E2836;padding-top:6mm;margin-top:14mm}
+  .cover .meta b{display:block;color:#F4F7FB;font-weight:500;margin-top:2px;font-size:9pt}
+  .cover .glow{position:absolute;right:-70mm;top:-40mm;width:190mm;height:190mm;border-radius:50%;
+               background:radial-gradient(circle,rgba(14,158,234,.17),transparent 62%)}
+
+  /* ---------- structure ---------- */
+  h2{font-family:var(--disp);font-weight:600;font-size:16pt;line-height:1.2;margin:0 0 1.5mm;
+     letter-spacing:-.01em;color:var(--ink);break-after:avoid;break-inside:avoid}
+  /* A heading plus its lede must travel together, or a section label strands
+     at the foot of a page with its title overleaf. */
+  h2 + .lede, h2 + p{break-before:avoid}
+  h2 .n{font-family:var(--mono);font-size:8.5pt;color:var(--blue);letter-spacing:.14em;
+        display:block;font-weight:500;margin-bottom:2.5mm;text-transform:uppercase}
+  h3{font-family:var(--mono);font-size:8pt;letter-spacing:.14em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;margin:7mm 0 2.5mm;break-after:avoid}
+  section{margin-bottom:9mm;break-inside:auto}
+  .lede{font-size:11pt;line-height:1.5;color:var(--ink-2);margin:0 0 4mm;max-width:158mm}
+  p{margin:0 0 3mm;max-width:158mm}
+  strong{font-weight:600}
+  .mono{font-family:var(--mono);font-size:8.6pt}
+  em.t{font-style:normal;font-family:var(--mono);font-size:8.6pt;color:var(--cyan);
+       background:var(--wash-2);padding:0 3px;border-radius:2px}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:9pt;margin:0 0 3mm;break-inside:avoid}
+  th{text-align:left;font-family:var(--mono);font-size:7.4pt;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;padding:0 6px 2mm;border-bottom:1.5px solid var(--ink)}
+  td{padding:2.3mm 6px;border-bottom:.6px solid var(--rule);vertical-align:top;line-height:1.45}
+  td:first-child{color:var(--ink);font-weight:500;width:30%}
+  tr:last-child td{border-bottom:0}
+  table.tri td:first-child{width:24%}
+  table.tri td:nth-child(2){width:30%;font-family:var(--mono);font-size:8.3pt;color:var(--cyan)}
+
+  /* ---------- blocks ---------- */
+  .note{background:var(--wash);border-left:3px solid var(--gold);padding:4mm 5mm;margin:0 0 6mm;
+        font-size:9.2pt;line-height:1.5;break-inside:avoid}
+  .note b.h{display:block;font-family:var(--mono);font-size:7.6pt;letter-spacing:.14em;text-transform:uppercase;
+            color:var(--gold);margin-bottom:2mm}
+  .note p{margin:0 0 2mm;max-width:none}
+  .note p:last-child{margin:0}
+
+  .pull{border:.8px solid var(--rule);border-left:3px solid var(--signal);background:var(--wash);
+        padding:4.5mm 5mm;margin:1mm 0 5mm;break-inside:avoid;display:flex;gap:7mm;align-items:flex-start}
+  .pull .fig{font-family:var(--mono);font-size:21pt;line-height:1;color:var(--signal);font-weight:500;white-space:nowrap}
+  .pull .fig span{display:block;font-size:7pt;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:2mm}
+  .pull p{margin:0;font-size:9.3pt;max-width:none}
+
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 4mm}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 3mm 11mm;break-inside:avoid;max-width:158mm}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:6.5mm;height:6.5mm;
+       border-radius:50%;background:var(--blue);color:#fff;font-family:var(--mono);font-size:8pt;
+       display:flex;align-items:center;justify-content:center;font-weight:500}
+  ol.steps li b{display:block;font-weight:600;margin-bottom:.6mm}
+
+  ul.plain{list-style:none;padding:0;margin:0 0 4mm}
+  ul.plain li{position:relative;padding:0 0 2.6mm 5mm;max-width:158mm;break-inside:avoid}
+  ul.plain li::before{content:'';position:absolute;left:0;top:2.1mm;width:2mm;height:2mm;background:var(--blue)}
+  ul.plain li b{font-weight:600}
+
+  .flow{width:100%;margin:2mm 0 4mm;break-inside:avoid}
+  .status{display:inline-block;font-family:var(--mono);font-size:7.2pt;letter-spacing:.1em;
+          text-transform:uppercase;padding:1px 5px;border-radius:2px;font-weight:500;white-space:nowrap}
+  .st-live{background:#E3F3EA;color:var(--green)}
+  .st-next{background:#FDF1DC;color:var(--gold)}
+  .st-gate{background:#FBE4E8;color:var(--signal)}
+  .st-ver{background:var(--wash-2);color:var(--ink-3)}
+
+  hr{border:0;border-top:.8px solid var(--rule);margin:8mm 0}
+  .brk{page-break-before:always}
+  .foot{font-family:var(--mono);font-size:7.6pt;color:var(--ink-3);border-top:.8px solid var(--rule);
+        padding-top:3mm;margin-top:8mm}
+  /* FIRSTPAGE-FIX: these body files carry no cover, so the shared @page:first
+     rule was flushing page 1 to the paper edge. Restore the normal frame. */
+  @page:first{ margin:19mm 17mm 20mm; }
+</style></head><body>
+
+<section>
+  <h2><span class="n">Purpose</span>What this covers</h2>
+  <p class="lede">This answers four of the six items on your list: the two banana scenarios, how governance and friction levels work, and what actually worries a producer as against an exporter.</p>
+  <div class="scroll"><table class="tri">
+    <thead><tr><th>Your request</th><th>Where it is</th><th></th></tr></thead>
+    <tbody>
+      <tr><td>Demo page access</td><td class="num">sent separately</td><td>Live platform.</td></tr>
+      <tr><td>Banana scenario, producer side</td><td class="num">Section 2</td><td>Ready to load and run.</td></tr>
+      <tr><td>Banana scenario, exporter side</td><td class="num">Section 3</td><td>Plus a full worked example as the attached case file.</td></tr>
+      <tr><td>Sample debrief</td><td class="num">attached</td><td>Cavendish case file, nine turns, real output.</td></tr>
+      <tr><td>Governance and friction levels</td><td class="num">Sections 4 and 5</td><td></td></tr>
+      <tr><td>Producer vs exporter concerns</td><td class="num">Section 6</td><td>The part that shapes the architecture.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note">
+    <b class="h">On sourcing</b>
+    <p>The domain content in Sections 2 and 6 comes from Santiago Maspons directly, from forty years operating in this trade. Where a figure needs confirming before the pilot, it is marked <em class="t">to confirm</em> rather than asserted. Nothing here is inferred from public sources and presented as operator knowledge.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">Section 01</span>The two scenarios are not symmetrical</h2>
+  <p class="lede">This is the single most important thing to understand before building the pilot, and it is counter-intuitive.</p>
+  <p>The instinct is to treat producer and exporter as two positions on one ladder: the producer sells to the exporter, the exporter sells to Europe, same negotiation one level apart. That model is wrong and it would produce a product that fails on the producer side.</p>
+  <p><strong>The exporter negotiates against one counterparty.</strong> A European buyer, across a table, with a commercial mandate on both sides. Hard, but conventional. Both parties can move.</p>
+  <p><strong>The producer negotiates against two, and can only persuade one of them.</strong> He negotiates with the exporter over price. But the reference point for that price is the official minimum support price, set politically by the Presidency and the Ministry of Agriculture. He has no seat at that table and no argument that reaches it.</p>
+  <div class="pull">
+    <div class="fig" style="color:var(--blue)">2</div>
+    <div>
+      <p><strong>Two fronts, one of them silent.</strong> The producer's real grievance is that the official price is set by people who do not carry his input costs, his transport costs or his inflation. But that grievance is addressed to the State, and the person sitting opposite him is the exporter. He has to convert a political argument into a commercial one, in real time, without sounding like he is complaining.</p>
+      <p style="margin-top:3mm">That conversion is the hardest single move in the whole trade, and it is exactly what a rehearsal instrument should train.</p>
+    </div>
+  </div>
+  <p>The consequence for the pilot: <strong>the producer scenario is structurally harder than the exporter scenario, not simpler.</strong> Build it second if you need to build one first, but do not build it as a reduced version of the other.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 02</span>Scenario A — Producer side</h2>
+  <p class="lede">A large producer negotiating an annual fixed contract with a major international exporter.</p>
+
+  <h3>The evaluated party</h3>
+  <div class="scroll"><table class="tri">
+    <thead><tr><th>Attribute</th><th>Value</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Who</td><td class="num">Ecuadorian banana producer</td><td>Roughly 3 million boxes per year. This is not a smallholder: it is an industrial operation with real leverage.</td></tr>
+      <tr><td>Posture</td><td class="num">Conservative</td><td>Prefers a fixed annual contract with a serious exporter over speculating week to week on the spot market.</td></tr>
+      <tr><td>Why</td><td class="num">Predictability, plus a premium</td><td>Some weeks spot beats the contract, some weeks it does not. The contract carries additional compensation in the price for committed volume and reliability.</td></tr>
+      <tr><td>Leverage</td><td class="num">Volume and compliance</td><td>Guaranteed weekly volume, and exact compliance with the exporter's technical specification.</td></tr>
+      <tr><td>Pressure</td><td class="num">Cost structure</td><td>Inputs, transport and inflation have risen faster than the official reference price.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note" style="border-left-color:var(--signal)">
+    <b class="h" style="color:var(--signal)">The correction that matters most</b>
+    <p>Fruit rejection at the packing station is <strong>not a negotiating variable</strong>. It is a condition of doing business. A serious producer meets the technical specification exactly, and that is the end of the discussion.</p>
+    <p>Do not build a rejection-rate negotiation into the producer scenario. It would read as amateur to anyone in the trade, and it inverts the truth: <strong>the producer's discipline on specification is his strongest card, not his weakest.</strong> He brings it to the table as proof that he is worth a premium.</p>
+  </div>
+
+  <h3>The counterparty</h3>
+  <p>A major international exporter with an annual programme to fill. Bureaucratic in the commercial sense: its buyer works to a landed-cost target, treats the official support price as the natural reference, and asks why it should pay above a number the government has already set. Friction level 3.</p>
+
+  <h3>Tracked variables</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Variable</th><th>What it measures</th><th>Type</th></tr></thead>
+    <tbody>
+      <tr><td>Premium over the official reference</td><td>USD per box above the support price</td><td class="num">numeric</td></tr>
+      <tr><td>Committed weekly volume</td><td>Boxes per week across the contract</td><td class="num">numeric</td></tr>
+      <tr><td>Contract term</td><td>Weeks committed</td><td class="num">numeric</td></tr>
+      <tr><td>Input-cost adjustment clause</td><td>Whether the price moves when inputs, freight or fuel move, and against what index</td><td class="num">qualitative</td></tr>
+    </tbody>
+  </table></div>
+  <p>The fourth variable is the interesting one and it should be in the scenario deliberately. It is the commercial instrument that answers the political grievance: if the official price does not track input inflation, an adjustment clause in the private contract does the work the public price will not. A producer who gets that clause has won something the support price could never give him. A producer who only argues about cents per box has left it on the table.</p>
+
+  <h3>Private context, never disclosed in the session</h3>
+  <p>The producer's real position is that the official price is politically set and structurally too low. He cannot say this at the table. It is a complaint about the State, and the person opposite him is a commercial buyer who did not set it and cannot change it. Saying it out loud makes him sound like a man with a problem rather than a supplier with an offer.</p>
+  <p><strong>The rehearsal is won or lost on whether he converts that grievance into a commercial argument</strong>: cost structure, continuity risk, the cost to the exporter of a supplier who fails mid-season. Same underlying fact, different frame, completely different outcome.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 03</span>Scenario B — Exporter side</h2>
+  <p class="lede">The exporter negotiating with a European buyer under deforestation-traceability rules. A worked example is attached.</p>
+  <p>This scenario is conventional in structure and hard in content. Two commercial parties, both with mandates, both able to move. The difficulty is regulatory: the buyer's limits are imposed by law rather than preference, which means the usual commercial levers do not reach them.</p>
+  <div class="scroll"><table class="tri">
+    <thead><tr><th>Element</th><th>Value</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Evaluated party</td><td class="num">Exporter</td><td>2,400 tonnes a year into Northern Europe, 52-week programme.</td></tr>
+      <tr><td>Counterparty</td><td class="num">Head of sustainability compliance</td><td>Friction 4. Process is her shield. Defers to a legal committee she can invoke but not overrule.</td></tr>
+      <tr><td>Tracked variables</td><td class="num">four</td><td>Transition window in days, mapping cost share, price per box, and the scope of legal liability.</td></tr>
+      <tr><td>Qualitative variable</td><td class="num">liability scope</td><td>Whether the exporter carries liability for plots he holds no title to. Non-numeric, and the axis on which the negotiation is actually decided.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The attached case file is a full nine-turn run of this scenario. It is the best single illustration of what the product delivers, and we suggest reading it before the scenarios rather than after.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 04</span>Friction levels, in observable behaviour</h2>
+  <p class="lede">Friction is not a tone setting. It changes what the counterparty physically does in the conversation.</p>
+  <div class="scroll"><table class="tri">
+    <thead><tr><th>Level</th><th>Behaviour</th><th>When it is realistic</th></tr></thead>
+    <tbody>
+      <tr><td>1 &middot; Accommodating</td><td>Lets you finish. Acknowledges your position before stating its own. Never raises its voice.</td><td>An established relationship both sides want to protect.</td></tr>
+      <tr><td>2 &middot; Businesslike</td><td>Cordial and efficient. Pushes back once on a weak claim, then moves on. Does not fill silences.</td><td>A producer with his regular exporter of several years.</td></tr>
+      <tr><td>3 &middot; Pressuring</td><td>Interrupts vague or padded answers. Demands specifics. Uses silence as a tool: says nothing after your offer and lets you talk. Does not soften a refusal.</td><td>A large exporter's buyer facing a new supplier. A spot buyer.</td></tr>
+      <tr><td>4 &middot; Hostile</td><td>Cuts in the moment you pause. Challenges your authority to make the deal at all. Voices open scepticism about your numbers. Threatens to end the meeting.</td><td>A compliance officer with regulatory exposure. A counterparty who believes they have the stronger alternative.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Level 3 is where most real commercial negotiation lives, and it is the level most training products never reach because a counterparty that interrupts feels like a broken product until you understand it is the point.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 05</span>Governance: what is universal and what adapts</h2>
+  <p class="lede">The governance material is universal. Its implementation is not.</p>
+
+  <h3>Universal, in every segment, never negotiable</h3>
+  <ul class="plain">
+    <li><b>The mandate is declared before the session starts.</b> Floors, limits and objectives are logged before turn one and are immutable afterwards.</li>
+    <li><b>The participant does not set their own floor.</b> Whoever holds the mandate sets it. A trainee who declares their own limit will declare one they cannot breach.</li>
+    <li><b>Every scored row carries a verbatim quotation.</b> No quotation, no score.</li>
+    <li><b>Unmeasured never reads as clean.</b> An axis the system could not observe is reported as undetermined and excluded, never scored as zero.</li>
+    <li><b>Lines held are credited with the same rigour as lines crossed.</b> A record that only catalogues failure reads as an indictment, and people stop using it.</li>
+  </ul>
+
+  <h3>Adapts by segment</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Dimension</th><th>Producer</th><th>Exporter</th></tr></thead>
+    <tbody>
+      <tr><td>Tolerance for process</td><td>Low. Wants a price and a truck. Heavy governance reads as distrust.</td><td>High. Already lives inside contracts, certifications and audits.</td></tr>
+      <tr><td>Tracked variables</td><td>Two or three. More than that and the session stops feeling like his week.</td><td>Four or more, including a qualitative one.</td></tr>
+      <tr><td>Session length</td><td>Short. Six to eight turns.</td><td>Nine to twelve turns.</td></tr>
+      <tr><td>Output</td><td>A one-page readout: what you gave, what you got, what to try next time.</td><td>The full scored dossier.</td></tr>
+      <tr><td>Time pressure</td><td>Structural. The fruit ships this week whatever happens.</td><td>Contractual. The programme must be filled this year.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Same engine, same governance, different surface.</strong> Shipping the exporter's dossier to a producer would not be a generous default. It would be the reason he never opens it twice.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 06</span>What worries each side</h2>
+  <div class="scroll"><table>
+    <thead><tr><th></th><th>Producer</th><th>Exporter</th></tr></thead>
+    <tbody>
+      <tr><td>The real fear</td><td>A price that does not cover a cost structure that keeps rising, locked in for a year.</td><td>Losing the annual programme, or being caught between a fixed sale price and a rising cost at origin.</td></tr>
+      <tr><td>Cannot say out loud</td><td>That the official reference price is political and too low. It is a complaint about the State, not an argument to the buyer.</td><td>How thin the cover is if this supplier fails mid-season.</td></tr>
+      <tr><td>Real leverage</td><td>Guaranteed volume and exact compliance with specification. Reliability is the product.</td><td>Logistics, certification and consolidation. Access to the market.</td></tr>
+      <tr><td>Structural weakness</td><td>Cannot negotiate with the party that sets his reference price.</td><td>Limits imposed by regulation cannot be moved by commercial argument.</td></tr>
+      <tr><td>What ends the relationship</td><td class="num" colspan="2">To confirm with Santiago before the pilot. This is the single most valuable piece still missing, and it belongs in the private context of both profiles.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2><span class="n">Section 07</span>What this means for the build</h2>
+  <ul class="plain">
+    <li><b>Two profiles, not one profile with a switch.</b> The producer and the exporter face different counterparties with different sources of authority. A shared template will collapse them into the same character, which is the failure mode we have already measured and corrected once in the debate engine.</li>
+    <li><b>The producer package is the harder one.</b> It needs the two-front structure, and the private-context conversion is what makes it worth doing. Budget accordingly.</li>
+    <li><b>The qualitative variable is not optional.</b> In both scenarios the negotiation is decided on something that is not a number: liability scope for the exporter, the adjustment clause for the producer. A ledger that only captures figures will report that nothing happened.</li>
+    <li><b>Output differs by segment.</b> One page for the producer, full dossier for the exporter. Same evidence, different surface.</li>
+  </ul>
+  <p class="foot">Prepared for Python Technologies &middot; TACTIK AI &middot; 22 September 2026 &middot; domain content from Santiago Maspons &middot; figures marked to confirm are not yet validated</p>
+</section>
+
+</body></html>

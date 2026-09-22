@@ -1,0 +1,221 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>TACTIK AI: Integration Brief</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#101722; --ink-2:#3C4757; --ink-3:#6B7789; --rule:#DCE2EA; --paper:#FFFFFF;
+    --wash:#F5F7FA; --wash-2:#EDF1F6;
+    --blue:#0B62C4; --cyan:#0E7C94; --green:#0A6B4B; --gold:#8A6206; --signal:#C8102E;
+    --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+    --body:'Inter Tight','Helvetica Neue',Arial,sans-serif;
+    --disp:'Fraunces',Georgia,'Times New Roman',serif;
+  }
+  @page{ size:A4; margin:19mm 17mm 20mm; }
+  @page:first{ margin:0; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);font-size:9.9pt;line-height:1.55;
+       -webkit-print-color-adjust:exact;print-color-adjust:exact;background:var(--paper)}
+
+  /* ---------- cover ---------- */
+  .cover{height:297mm;width:100%;padding:34mm 24mm 22mm;display:flex;flex-direction:column;
+         background:#06090F;color:#F4F7FB;page-break-after:always;position:relative;overflow:hidden}
+  .cover .rule{width:56px;height:3px;background:#0E9EEA;margin-bottom:22mm}
+  .cover .kicker{font-family:var(--mono);font-size:8.5pt;letter-spacing:.24em;text-transform:uppercase;color:#6FC3E8;margin:0 0 9mm}
+  .cover h1{font-family:var(--disp);font-weight:600;font-size:36pt;line-height:1.04;margin:0 0 7mm;letter-spacing:-.015em;max-width:150mm}
+  .cover .sub{font-size:13pt;line-height:1.45;color:#AFBDCE;max-width:126mm;margin:0 0 auto;font-weight:400}
+  .cover .sub b{color:#F4F7FB;font-weight:500}
+  .cover .meta{display:flex;gap:16mm;flex-wrap:wrap;font-family:var(--mono);font-size:8.5pt;
+               color:#8496AB;border-top:1px solid #1E2836;padding-top:6mm;margin-top:14mm}
+  .cover .meta b{display:block;color:#F4F7FB;font-weight:500;margin-top:2px;font-size:9pt}
+  .cover .glow{position:absolute;right:-70mm;top:-40mm;width:190mm;height:190mm;border-radius:50%;
+               background:radial-gradient(circle,rgba(14,158,234,.17),transparent 62%)}
+
+  /* ---------- structure ---------- */
+  h2{font-family:var(--disp);font-weight:600;font-size:16pt;line-height:1.2;margin:0 0 1.5mm;
+     letter-spacing:-.01em;color:var(--ink);break-after:avoid;break-inside:avoid}
+  /* A heading plus its lede must travel together, or a section label strands
+     at the foot of a page with its title overleaf. */
+  h2 + .lede, h2 + p{break-before:avoid}
+  h2 .n{font-family:var(--mono);font-size:8.5pt;color:var(--blue);letter-spacing:.14em;
+        display:block;font-weight:500;margin-bottom:2.5mm;text-transform:uppercase}
+  h3{font-family:var(--mono);font-size:8pt;letter-spacing:.14em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;margin:7mm 0 2.5mm;break-after:avoid}
+  section{margin-bottom:9mm;break-inside:auto}
+  .lede{font-size:11pt;line-height:1.5;color:var(--ink-2);margin:0 0 4mm;max-width:158mm}
+  p{margin:0 0 3mm;max-width:158mm}
+  strong{font-weight:600}
+  .mono{font-family:var(--mono);font-size:8.6pt}
+  em.t{font-style:normal;font-family:var(--mono);font-size:8.6pt;color:var(--cyan);
+       background:var(--wash-2);padding:0 3px;border-radius:2px}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:9pt;margin:0 0 3mm;break-inside:avoid}
+  th{text-align:left;font-family:var(--mono);font-size:7.4pt;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;padding:0 6px 2mm;border-bottom:1.5px solid var(--ink)}
+  td{padding:2.3mm 6px;border-bottom:.6px solid var(--rule);vertical-align:top;line-height:1.45}
+  td:first-child{color:var(--ink);font-weight:500;width:30%}
+  tr:last-child td{border-bottom:0}
+  table.tri td:first-child{width:24%}
+  table.tri td:nth-child(2){width:30%;font-family:var(--mono);font-size:8.3pt;color:var(--cyan)}
+
+  /* ---------- blocks ---------- */
+  .note{background:var(--wash);border-left:3px solid var(--gold);padding:4mm 5mm;margin:0 0 6mm;
+        font-size:9.2pt;line-height:1.5;break-inside:avoid}
+  .note b.h{display:block;font-family:var(--mono);font-size:7.6pt;letter-spacing:.14em;text-transform:uppercase;
+            color:var(--gold);margin-bottom:2mm}
+  .note p{margin:0 0 2mm;max-width:none}
+  .note p:last-child{margin:0}
+
+  .pull{border:.8px solid var(--rule);border-left:3px solid var(--signal);background:var(--wash);
+        padding:4.5mm 5mm;margin:1mm 0 5mm;break-inside:avoid;display:flex;gap:7mm;align-items:flex-start}
+  .pull .fig{font-family:var(--mono);font-size:21pt;line-height:1;color:var(--signal);font-weight:500;white-space:nowrap}
+  .pull .fig span{display:block;font-size:7pt;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:2mm}
+  .pull p{margin:0;font-size:9.3pt;max-width:none}
+
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 4mm}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 3mm 11mm;break-inside:avoid;max-width:158mm}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:6.5mm;height:6.5mm;
+       border-radius:50%;background:var(--blue);color:#fff;font-family:var(--mono);font-size:8pt;
+       display:flex;align-items:center;justify-content:center;font-weight:500}
+  ol.steps li b{display:block;font-weight:600;margin-bottom:.6mm}
+
+  ul.plain{list-style:none;padding:0;margin:0 0 4mm}
+  ul.plain li{position:relative;padding:0 0 2.6mm 5mm;max-width:158mm;break-inside:avoid}
+  ul.plain li::before{content:'';position:absolute;left:0;top:2.1mm;width:2mm;height:2mm;background:var(--blue)}
+  ul.plain li b{font-weight:600}
+
+  .flow{width:100%;margin:2mm 0 4mm;break-inside:avoid}
+  .status{display:inline-block;font-family:var(--mono);font-size:7.2pt;letter-spacing:.1em;
+          text-transform:uppercase;padding:1px 5px;border-radius:2px;font-weight:500;white-space:nowrap}
+  .st-live{background:#E3F3EA;color:var(--green)}
+  .st-next{background:#FDF1DC;color:var(--gold)}
+  .st-gate{background:#FBE4E8;color:var(--signal)}
+  .st-ver{background:var(--wash-2);color:var(--ink-3)}
+
+  hr{border:0;border-top:.8px solid var(--rule);margin:8mm 0}
+  .brk{page-break-before:always}
+  .foot{font-family:var(--mono);font-size:7.6pt;color:var(--ink-3);border-top:.8px solid var(--rule);
+        padding-top:3mm;margin-top:8mm}
+  /* FIRSTPAGE-FIX: these body files carry no cover, so the shared @page:first
+     rule was flushing page 1 to the paper edge. Restore the normal frame. */
+  @page:first{ margin:19mm 17mm 20mm; }
+</style></head><body>
+
+<section>
+  <h2><span class="n">Purpose</span>What this document covers</h2>
+  <p class="lede">Following our call on 21 September, this sets out what the TACTIK platform is, what it produces, where an implementation partner would work, and what a first scoped engagement could look like.</p>
+  <p>It is written for an engineering reader. It describes interfaces, deployment surfaces and acceptance criteria rather than product positioning. Where the platform is incomplete, that is stated plainly, because a scope you cannot quote is of no use to either of us.</p>
+  <div class="note" style="border-left-color:var(--blue)">
+    <b class="h" style="color:var(--blue)">Scope of disclosure</b>
+    <p>This document covers the integration perimeter: interfaces, data contracts, deployment surfaces, and the output artifact. It does not cover the reasoning layer, the behavioural profile authoring method, the adjudication logic or the scoring model. That boundary is the one already reflected in the mutual NDA, and it is not a negotiating posture: none of it is required to scope, quote or deliver the work described in Section 5.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">Section 01</span>What the platform is</h2>
+  <p class="lede">A behavioural simulation platform that puts an executive across the table from a modelled counterparty, then returns a scored, evidence-backed record of the encounter.</p>
+
+  <h3>Stack as deployed</h3>
+  <div class="scroll"><table class="tri">
+    <thead><tr><th>Layer</th><th>Technology</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Frontend</td><td class="num">React 18, TypeScript 5, Vite</td><td>Roughly 80 routes in production. Tailwind, shadcn/ui, Recharts.</td></tr>
+      <tr><td>Backend</td><td class="num">Supabase (PostgreSQL)</td><td>Row-level security, auth, storage, realtime.</td></tr>
+      <tr><td>Compute</td><td class="num">Deno edge functions</td><td>Simulation, adjudication, debrief generation, research pipeline.</td></tr>
+      <tr><td>Reasoning</td><td class="num">Model-agnostic</td><td>Provider abstracted behind an internal interface. Not part of this scope.</td></tr>
+      <tr><td>Video (planned)</td><td class="num">Conversational video, WebRTC</td><td>Photorealistic counterparty rendering. Integration not yet validated in production.</td></tr>
+      <tr><td>Hosting</td><td class="num">Lovable, Cloudflare</td><td>Live at tactikai.co.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The platform is live and running in production today. The work discussed below is hardening and extending it, not building it from zero.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 02</span>What it produces</h2>
+  <p class="lede">The output is the product. Everything else is machinery that exists to generate it reliably.</p>
+  <p>The attached case file is a real artifact from a real session, not a mock-up. It is the specification target: whatever is built must produce this, reliably, at acceptable latency and cost.</p>
+
+  <div class="scroll"><table class="tri">
+    <thead><tr><th>Component</th><th>Content</th><th>Why it matters for integration</th></tr></thead>
+    <tbody>
+      <tr><td>Audit header</td><td class="num">ledger UUID, trace id, timestamp, transcript hash, engine version provenance</td><td>Every figure must be traceable to a specific engine build. Version provenance distinguishes the build that ran the session from the build that compiled the file.</td></tr>
+      <tr><td>In-turn ledger</td><td class="num">append-only, turn-indexed</td><td>Written during the session, not reconstructed afterwards. This is the hardest non-functional requirement in the system.</td></tr>
+      <tr><td>Scored axes</td><td class="num">six, one excluded by design</td><td>Five score the participant. The sixth measures whether the modelled counterparty stayed true to its profile, and is deliberately kept out of the composite.</td></tr>
+      <tr><td>Forensic audit</td><td class="num">per-turn, quotation-backed</td><td>No scored row exists without a verbatim quotation behind it.</td></tr>
+      <tr><td>Rendered file</td><td class="num">PDF, six pages</td><td>Server-side rendering pipeline. Charts are generated from ledger rows, never hand-placed.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Two properties are non-negotiable and shape the architecture more than anything else. <strong>The ledger is written in-turn</strong>, because a record reconstructed after the fact is a narrative rather than evidence. And <strong>unmeasured never reads as clean</strong>: an axis the system could not observe is reported as undetermined and excluded from the composite rather than scored as zero.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 03</span>Current state, stated plainly</h2>
+  <div class="scroll"><table class="tri">
+    <thead><tr><th>Capability</th><th>Status</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>Text simulation, end to end</td><td><span class="status st-live">Working</span></td><td>Human against a modelled counterparty. Runs at zero marginal video cost.</td></tr>
+      <tr><td>Behavioural profile persistence</td><td><span class="status st-live">Working</span></td><td>Profiles, sessions, message history, caching with staleness scoring.</td></tr>
+      <tr><td>Adjudication and scoring</td><td><span class="status st-live">Working</span></td><td>Produced the attached case file.</td></tr>
+      <tr><td>Case file rendering</td><td><span class="status st-live">Working</span></td><td>Server-side PDF generation from ledger rows.</td></tr>
+      <tr><td>Guest session persistence</td><td><span class="status st-next">Gap</span></td><td>Guest runs hold state in memory to avoid row-level security friction, so an evaluator session leaves no auditable record. This needs an ephemeral persistence path.</td></tr>
+      <tr><td>Credential broker</td><td><span class="status st-gate">Outstanding</span></td><td>Third-party API keys must move off the browser bundle and behind an edge function issuing short-lived tokens.</td></tr>
+      <tr><td>Deterministic session teardown</td><td><span class="status st-gate">Outstanding</span></td><td>Metered video sessions must terminate on unmount, on timeout and on participant absence. Without this, an abandoned browser tab bills indefinitely.</td></tr>
+      <tr><td>Live video latency validation</td><td><span class="status st-gate">Outstanding</span></td><td>Measured median reply latency is around 3.2s with observed spikes to 14.4s, correlated with an in-turn research step. Live video requires this under roughly 1.2s at the 95th percentile.</td></tr>
+      <tr><td>Conferencing surfaces</td><td><span class="status st-next">Planned</span></td><td>Zoom, Microsoft Teams and Google Meet, for observer participation in live sessions.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The last four rows are the work. They are infrastructure and hardening problems rather than product-definition problems, which is why they are a good fit for an external implementation partner and why they can be scoped against objective acceptance criteria.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 04</span>Integration perimeter</h2>
+  <p class="lede">What a partner works on, and what stays inside TACTIK. The boundary is drawn on necessity, not secrecy.</p>
+
+  <h3>In scope for a partner</h3>
+  <ul class="plain">
+    <li><b>Credential brokering and session lifecycle.</b> Edge function issuing ephemeral tokens; hard duration caps; teardown on unmount, timeout and absence; one concurrent metered session per user.</li>
+    <li><b>Video layer integration.</b> WebRTC session establishment, dual-track binding, provider abstraction behind the existing interface, mock provider for zero-cost testing.</li>
+    <li><b>Conferencing surfaces.</b> Zoom, Teams and Meet participation so observers can watch a live session without the participant screen-sharing.</li>
+    <li><b>Observability.</b> Latency instrumentation per pipeline stage, inference spend telemetry per tenant, alerting on cost and on session leakage.</li>
+    <li><b>Persistence and tenancy.</b> Ephemeral persistence for evaluator sessions, row-level security policies, retention and deletion.</li>
+    <li><b>Rendering pipeline.</b> Hardening the server-side case file generation, canonical hashing of the source transcript, deterministic output.</li>
+  </ul>
+
+  <h3>Outside the perimeter</h3>
+  <p>The reasoning layer, the behavioural profile authoring method, the adjudication logic, the scoring model, the prompt architecture and the internals of the sealing pipeline remain with TACTIK and are not licensed. This is already reflected in the mutual NDA received from your side, which preserves TACTIK intellectual property, prohibits reverse engineering and grants no license.</p>
+  <p>This boundary is practical rather than defensive. Every item in the in-scope list can be specified, built, tested and accepted without reference to any of it. A partner integrates against declared interfaces and measurable acceptance criteria.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 05</span>Proposed first engagement</h2>
+  <p class="lede">Narrow, fixed price, objectively testable. Designed so both sides learn whether this works before either commits further.</p>
+
+  <div class="scroll"><table>
+    <thead><tr><th>Deliverable</th><th>Acceptance criterion</th></tr></thead>
+    <tbody>
+      <tr><td>Credential broker</td><td>No third-party key present in the shipped browser bundle, verified by inspection. Client receives a room reference and nothing else.</td></tr>
+      <tr><td>Deterministic teardown</td><td>Sessions terminate on component unmount, on duration cap and on participant absence. Demonstrated by a test that abandons a session and shows billing stops.</td></tr>
+      <tr><td>Latency instrumentation</td><td>Per-stage timings recorded and queryable. A 95th-percentile figure reportable for any date range.</td></tr>
+      <tr><td>Ephemeral evaluator persistence</td><td>A guest session produces a retrievable ledger and case file, deleted automatically after a defined window.</td></tr>
+      <tr><td>One conferencing surface</td><td>Observers join a live session through a single named platform and see the session feed as a participant.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Indicative duration four to six weeks. Fixed price against these criteria rather than time and materials. If the engagement works, the natural follow-on is the live video latency work, which is the gate on the whole video modality and is better attempted once the cost controls above are in place.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 06</span>What we need from you to proceed</h2>
+  <ul class="plain">
+    <li><b>A named technical lead</b> for the engagement, with relevant WebRTC and Supabase or Postgres experience.</li>
+    <li><b>Confirmation that you work fixed-price</b> against defined acceptance criteria, rather than time and materials only.</li>
+    <li><b>Your assessment of the scope in Section 5</b>, including anything you consider mis-scoped or missing. A partner who accepts a scope uncritically is not the partner we want.</li>
+    <li><b>Indicative pricing and earliest start date.</b></li>
+    <li><b>Confirmation of security posture</b> for handling a client's declared commercial thresholds, which are the most sensitive data the platform holds.</li>
+  </ul>
+  <p style="margin-top:6mm">The attached case file is the specification target. It is a reference case built against a synthetic counterparty and a synthetic evaluated party, produced by the live system. It is not a client engagement and should be treated as a technical exhibit.</p>
+
+  <p class="foot">TACTIK AI &middot; prepared following the call of 21 September 2026 &middot; covered by the mutual NDA in force &middot; commercial thresholds and reasoning methodology excluded by design</p>
+</section>
+
+</body></html>
