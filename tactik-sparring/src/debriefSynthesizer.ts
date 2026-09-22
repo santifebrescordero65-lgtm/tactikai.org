@@ -384,6 +384,11 @@ export interface SynthesisInput {
   humanQuestions: number;
   humanClaims: number;
   shadow?: ShadowDelta | null;
+  /**
+   * Ledger from the shadow AI-vs-AI run. Supplying it plots the optimal line
+   * on the concession chart beside the trainee's own.
+   */
+  shadowEvents?: LedgerEvent[];
 }
 
 export function synthesizeDebrief(input: SynthesisInput): DebriefReport {
@@ -419,7 +424,7 @@ export function synthesizeDebrief(input: SynthesisInput): DebriefReport {
     composite: Math.round(composite),
     axes,
     leverageTrajectory: computeLeverage(events),
-    concessionCurves: buildCurves(events, genome, input.shadow ?? null),
+    concessionCurves: buildCurves(events, genome, input.shadowEvents ?? null),
     redLineStatus: buildRedLineStatus(events, session, genome),
     shadowDelta: input.shadow ?? null,
     buildIntegrity: scoreBuildIntegrity(events, genome),
@@ -427,18 +432,36 @@ export function synthesizeDebrief(input: SynthesisInput): DebriefReport {
   };
 }
 
+/**
+ * Builds the per-variable chart series.
+ *
+ * `optimal` is the HUMAN line from the shadow run — the trajectory an optimal
+ * negotiator took against this same genome. Plotting the persona's own
+ * projected concession curve here instead was a real defect: it labelled the
+ * counterparty's expected path as "optimal", so the chart claimed the trainee
+ * should have converged toward the buyer's position rather than held above it.
+ */
 function buildCurves(
   events: LedgerEvent[],
   genome: ArbiterGenome,
-  shadow: ShadowDelta | null,
+  shadowEvents: LedgerEvent[] | null,
 ): DebriefReport['concessionCurves'] {
   const out: DebriefReport['concessionCurves'] = {};
-  const maxTurn = events.reduce((m, e) => Math.max(m, e.turnIdx), 0);
+  const maxTurn = Math.max(
+    events.reduce((m, e) => Math.max(m, e.turnIdx), 0),
+    shadowEvents?.reduce((m, e) => Math.max(m, e.turnIdx), 0) ?? 0,
+  );
 
-  for (const variable of Object.keys(genome.expectedCurve)) {
+  const variables = new Set<string>([
+    ...Object.keys(genome.expectedCurve),
+    ...events.filter((e) => e.kind === 'offer' && e.variable).map((e) => e.variable as string),
+  ]);
+
+  for (const variable of variables) {
     const series: DebriefReport['concessionCurves'][string] = [];
     let human: number | null = null;
     let pal: number | null = null;
+    let optimal: number | null = null;
 
     for (let t = 0; t <= maxTurn; t++) {
       for (const e of events) {
@@ -446,8 +469,12 @@ function buildCurves(
         if (e.actor === 'human') human = e.value;
         if (e.actor === 'pal') pal = e.value;
       }
-      const optimal =
-        shadow && shadow.variable === variable ? genome.expectedCurve[variable][Math.min(t, genome.expectedCurve[variable].length - 1)] ?? null : null;
+      if (shadowEvents) {
+        for (const e of shadowEvents) {
+          if (e.turnIdx !== t || e.kind !== 'offer' || e.variable !== variable || e.value === undefined) continue;
+          if (e.actor === 'human') optimal = e.value;
+        }
+      }
       series.push({ turnIdx: t, human, pal, optimal });
     }
     out[variable] = series;

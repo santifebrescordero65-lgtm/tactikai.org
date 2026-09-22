@@ -255,6 +255,7 @@ const report = synthesizeDebrief({
   humanQuestions: snap.humanQuestions,
   humanClaims: snap.humanClaims,
   shadow,
+  shadowEvents,
 });
 
 console.log('\n=== DEBRIEF ===');

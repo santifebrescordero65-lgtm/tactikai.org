@@ -28,6 +28,18 @@ const cases: [string, string, number | null][] = [
   ['Payment terms are forty five days.', 'payment_terms_days', 45],
   ['I can commit twenty four hundred tonnes.', 'volume_mt', 2400],
   ['Twelve hundred MT in year one.', 'volume_mt', 1200],
+  // Regression: a sentence boundary must terminate a number run. Without it
+  // "three sixty. Three dollars sixty" merged into one run reading 66.60 and
+  // the counterparty's opening anchor disappeared from the ledger.
+  ['Four ninety. Look, the market is clearing at three sixty. Three dollars sixty a box.', 'unit_price_usd', 3.60],
+  ['Four twenty a box, and I need sixty day payment terms.', 'unit_price_usd', 4.20],
+  ['Four twenty a box, and I need sixty day payment terms.', 'payment_terms_days', 60],
+  // Regression: a price must not be booked as payment terms because "terms"
+  // happens to sit within 40 characters of the figure.
+  ['Payment terms are sixty days regardless. On price, four dollars a box is my ceiling.', 'unit_price_usd', 4.00],
+  ['Payment terms are sixty days regardless. On price, four dollars a box is my ceiling.', 'payment_terms_days', 60],
+  // Regression: the alias "net" must not match inside "ninety".
+  ['Three ninety a box and we close today.', 'payment_terms_days', null],
   // Must NOT extract: no alias cue anywhere near the number.
   ['We have been doing this since nineteen ninety eight.', 'unit_price_usd', null],
   ['There are twelve of us on the buying team.', 'unit_price_usd', null],

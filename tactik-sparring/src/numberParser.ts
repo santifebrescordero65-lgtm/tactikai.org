@@ -49,6 +49,9 @@ const BOUNDARY = new Set([
   'point', 'dollars', 'dollar', 'euros', 'euro', 'usd', 'eur', 'bucks', 'and',
 ]);
 
+/** Punctuation that ends a number run. A clause boundary is never inside one. */
+const TERMINATOR = new Set(['.', ',', ';', ':', '!', '?']);
+
 /** Words that may appear inside a number run without breaking it. */
 const FILLER = new Set(['a', 'the', 'about', 'around', 'roughly', 'just', 'maybe']);
 
@@ -119,8 +122,15 @@ export interface NumberCandidate {
  */
 export function parseNumbers(text: string): NumberCandidate[] {
   const lower = text.toLowerCase();
-  // Keep digits, decimal points, hyphens (forty-five) and word characters.
-  const tokens = lower.match(/[a-z]+|-?\d[\d,]*(?:\.\d+)?|%/g) ?? [];
+  /**
+   * Punctuation is tokenized rather than discarded, because a sentence boundary
+   * has to terminate a number run. Dropping it merged "three sixty. Three
+   * dollars sixty a box" into a single run that reduced to 66.60 — so the
+   * counterparty's opening anchor of 3.60 vanished from the ledger entirely.
+   * A decimal point inside a figure is already captured by the number pattern,
+   * so it never reaches the punctuation branch.
+   */
+  const tokens = lower.match(/[a-z]+|-?\d[\d,]*(?:\.\d+)?|%|[.,;:!?]/g) ?? [];
 
   // Re-derive offsets so quotes and proximity checks stay accurate.
   const offsets: number[] = [];
@@ -151,6 +161,7 @@ export function parseNumbers(text: string): NumberCandidate[] {
 
     while (i < tokens.length) {
       const t = tokens[i];
+      if (TERMINATOR.has(t)) break;
       if (isNumberWord(t)) {
         groups[groups.length - 1].push(t);
         i++;
