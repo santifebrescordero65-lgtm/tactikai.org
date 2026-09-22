@@ -1,0 +1,277 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>TACTIK AI: What We Built</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ink:#101722; --ink-2:#3C4757; --ink-3:#6B7789; --rule:#DCE2EA; --paper:#FFFFFF;
+    --wash:#F5F7FA; --wash-2:#EDF1F6;
+    --blue:#0B62C4; --cyan:#0E7C94; --green:#0A6B4B; --gold:#8A6206; --signal:#C8102E;
+    --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+    --body:'Inter Tight','Helvetica Neue',Arial,sans-serif;
+    --disp:'Fraunces',Georgia,'Times New Roman',serif;
+  }
+  @page{ size:A4; margin:19mm 17mm 20mm; }
+  @page:first{ margin:0; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--body);color:var(--ink);font-size:9.9pt;line-height:1.55;
+       -webkit-print-color-adjust:exact;print-color-adjust:exact;background:var(--paper)}
+
+  /* ---------- cover ---------- */
+  .cover{height:297mm;width:100%;padding:34mm 24mm 22mm;display:flex;flex-direction:column;
+         background:#06090F;color:#F4F7FB;page-break-after:always;position:relative;overflow:hidden}
+  .cover .rule{width:56px;height:3px;background:#0E9EEA;margin-bottom:22mm}
+  .cover .kicker{font-family:var(--mono);font-size:8.5pt;letter-spacing:.24em;text-transform:uppercase;color:#6FC3E8;margin:0 0 9mm}
+  .cover h1{font-family:var(--disp);font-weight:600;font-size:36pt;line-height:1.04;margin:0 0 7mm;letter-spacing:-.015em;max-width:150mm}
+  .cover .sub{font-size:13pt;line-height:1.45;color:#AFBDCE;max-width:126mm;margin:0 0 auto;font-weight:400}
+  .cover .sub b{color:#F4F7FB;font-weight:500}
+  .cover .meta{display:flex;gap:16mm;flex-wrap:wrap;font-family:var(--mono);font-size:8.5pt;
+               color:#8496AB;border-top:1px solid #1E2836;padding-top:6mm;margin-top:14mm}
+  .cover .meta b{display:block;color:#F4F7FB;font-weight:500;margin-top:2px;font-size:9pt}
+  .cover .glow{position:absolute;right:-70mm;top:-40mm;width:190mm;height:190mm;border-radius:50%;
+               background:radial-gradient(circle,rgba(14,158,234,.17),transparent 62%)}
+
+  /* ---------- structure ---------- */
+  h2{font-family:var(--disp);font-weight:600;font-size:16pt;line-height:1.2;margin:0 0 1.5mm;
+     letter-spacing:-.01em;color:var(--ink);break-after:avoid;break-inside:avoid}
+  /* A heading plus its lede must travel together, or a section label strands
+     at the foot of a page with its title overleaf. */
+  h2 + .lede, h2 + p{break-before:avoid}
+  h2 .n{font-family:var(--mono);font-size:8.5pt;color:var(--blue);letter-spacing:.14em;
+        display:block;font-weight:500;margin-bottom:2.5mm;text-transform:uppercase}
+  h3{font-family:var(--mono);font-size:8pt;letter-spacing:.14em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;margin:7mm 0 2.5mm;break-after:avoid}
+  section{margin-bottom:9mm;break-inside:auto}
+  .lede{font-size:11pt;line-height:1.5;color:var(--ink-2);margin:0 0 4mm;max-width:158mm}
+  p{margin:0 0 3mm;max-width:158mm}
+  strong{font-weight:600}
+  .mono{font-family:var(--mono);font-size:8.6pt}
+  em.t{font-style:normal;font-family:var(--mono);font-size:8.6pt;color:var(--cyan);
+       background:var(--wash-2);padding:0 3px;border-radius:2px}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;font-size:9pt;margin:0 0 3mm;break-inside:avoid}
+  th{text-align:left;font-family:var(--mono);font-size:7.4pt;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--ink-3);font-weight:500;padding:0 6px 2mm;border-bottom:1.5px solid var(--ink)}
+  td{padding:2.3mm 6px;border-bottom:.6px solid var(--rule);vertical-align:top;line-height:1.45}
+  td:first-child{color:var(--ink);font-weight:500;width:30%}
+  tr:last-child td{border-bottom:0}
+  table.tri td:first-child{width:24%}
+  table.tri td:nth-child(2){width:30%;font-family:var(--mono);font-size:8.3pt;color:var(--cyan)}
+
+  /* ---------- blocks ---------- */
+  .note{background:var(--wash);border-left:3px solid var(--gold);padding:4mm 5mm;margin:0 0 6mm;
+        font-size:9.2pt;line-height:1.5;break-inside:avoid}
+  .note b.h{display:block;font-family:var(--mono);font-size:7.6pt;letter-spacing:.14em;text-transform:uppercase;
+            color:var(--gold);margin-bottom:2mm}
+  .note p{margin:0 0 2mm;max-width:none}
+  .note p:last-child{margin:0}
+
+  .pull{border:.8px solid var(--rule);border-left:3px solid var(--signal);background:var(--wash);
+        padding:4.5mm 5mm;margin:1mm 0 5mm;break-inside:avoid;display:flex;gap:7mm;align-items:flex-start}
+  .pull .fig{font-family:var(--mono);font-size:21pt;line-height:1;color:var(--signal);font-weight:500;white-space:nowrap}
+  .pull .fig span{display:block;font-size:7pt;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:2mm}
+  .pull p{margin:0;font-size:9.3pt;max-width:none}
+
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 4mm}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 3mm 11mm;break-inside:avoid;max-width:158mm}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:6.5mm;height:6.5mm;
+       border-radius:50%;background:var(--blue);color:#fff;font-family:var(--mono);font-size:8pt;
+       display:flex;align-items:center;justify-content:center;font-weight:500}
+  ol.steps li b{display:block;font-weight:600;margin-bottom:.6mm}
+
+  ul.plain{list-style:none;padding:0;margin:0 0 4mm}
+  ul.plain li{position:relative;padding:0 0 2.6mm 5mm;max-width:158mm;break-inside:avoid}
+  ul.plain li::before{content:'';position:absolute;left:0;top:2.1mm;width:2mm;height:2mm;background:var(--blue)}
+  ul.plain li b{font-weight:600}
+
+  .flow{width:100%;margin:2mm 0 4mm;break-inside:avoid}
+  .status{display:inline-block;font-family:var(--mono);font-size:7.2pt;letter-spacing:.1em;
+          text-transform:uppercase;padding:1px 5px;border-radius:2px;font-weight:500;white-space:nowrap}
+  .st-live{background:#E3F3EA;color:var(--green)}
+  .st-next{background:#FDF1DC;color:var(--gold)}
+  .st-gate{background:#FBE4E8;color:var(--signal)}
+  .st-ver{background:var(--wash-2);color:var(--ink-3)}
+
+  hr{border:0;border-top:.8px solid var(--rule);margin:8mm 0}
+  .brk{page-break-before:always}
+  .foot{font-family:var(--mono);font-size:7.6pt;color:var(--ink-3);border-top:.8px solid var(--rule);
+        padding-top:3mm;margin-top:8mm}
+</style>
+<style>
+  /* Chart furniture. The legend carries series identity, so it must never
+     degrade to plain text: colour alone is not the encoding, the swatch plus
+     the word is. */
+  .panel{border:.8px solid var(--rule);border-radius:3px;background:var(--wash);padding:6mm 5mm 5mm;break-inside:avoid}
+  .legend{display:flex;flex-wrap:wrap;gap:5mm 7mm;margin:0 0 4mm;font-size:8.6pt;color:var(--ink-2);
+          font-family:var(--body)}
+  .legend span{display:inline-flex;align-items:center;white-space:nowrap}
+  .legend i{display:inline-block;width:16px;height:3px;border-radius:2px;margin-right:2.2mm}
+  .legend .dash{background:transparent;border-top:3px dashed var(--green);height:0;border-radius:0}
+  figure.panel figcaption{margin-top:4mm}
+</style>
+</head><body>
+
+<section>
+  <h2><span class="n">Summary</span>What exists today</h2>
+  <p class="lede">TACTIK AI is decision rehearsal infrastructure. Executives negotiate live against a photorealistic replica carrying a quantified behavioural profile of a real counterparty, and receive an auditable, scored record of how they performed.</p>
+  <p>This document exists to make one thing unambiguous. This is not a concept deck. The behavioural engine, the adjudication layer, the scoring model, the database design and the commercial structure are built, tested and committed. What follows states precisely what is finished, what is not, and what is being asked for.</p>
+
+  <div class="note" style="border-left-color:var(--blue)">
+    <b class="h" style="color:var(--blue)">The position in four lines</b>
+    <p><strong>Built and verified:</strong> the behavioural profile compiler, the live adjudication engine, the spoken-number extraction layer, the six-axis scoring model, the database schema and two security-critical backend services. Nineteen of nineteen extraction tests pass. Typecheck clean. A full negotiation runs end to end.</p>
+    <p><strong>Not yet done:</strong> the reference implementation has not been merged into the live application, and live video has not been latency-tested against production.</p>
+    <p><strong>Commercially designed:</strong> a ninety-day paid pilot with a single committed metric, a refund condition, a defined cohort and a one-page contractual exhibit.</p>
+    <p><strong>The ask:</strong> one named introduction to a decision owner, or one room of them. Not a business-development retainer.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">Section 01</span>The idea, and the hard problem inside it</h2>
+  <p class="lede">Most training products ask an executive to role-play against a chatbot. Ours puts them across the table from a counterparty modelled on someone real, then grades the encounter.</p>
+  <p>The engine already runs autonomous simulations between two replicas while an executive observes. The new capability inverts that: the executive becomes the counterparty. That change is commercially significant because observation is episodic, one deal and one invoice, while rehearsal is habitual and sells as seats.</p>
+  <p>It also introduced one genuine engineering problem, and solving it is the reason this is defensible rather than obvious.</p>
+  <p>Our design principle held that TACTIK must control the conversation: who speaks, when, for how long. That works when both sides are machines. Against a human it fails, because routing every reply through our servers adds two to three seconds and the counterparty stops feeling real. The pressure that makes the exercise valuable evaporates.</p>
+  <p><strong>The resolution: TACTIK gave up generating the conversation and kept judging it.</strong> The video layer handles speech, fast and natural, including interruption. TACTIK observes every turn, extracts quantified offers, and writes an evidentiary record while the session is still running. The vendor decides what the counterparty says. TACTIK decides what it believes, what it will never agree to, and what it meant.</p>
+  <p>Two consequences follow. Video vendors become interchangeable, because scoring authority was never delegated. And the counterparty's reservation values never leave our database, so a participant who tries to talk the limit out of the replica reaches a character that knows its limits qualitatively and never numerically.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 02</span>Inventory: what is built, and how it was verified</h2>
+  <p class="lede">Every row below is committed code with tests, not a roadmap item.</p>
+  <table class="tri">
+    <thead><tr><th>Component</th><th>Status</th><th>What it does and how it was checked</th></tr></thead>
+    <tbody>
+      <tr><td>Profile compiler</td><td><span class="status st-live">Built</span></td><td>Turns one behavioural profile into a public half for the video vendor and a private half held in the database. Verified that zero reservation values appear in the outbound payload.</td></tr>
+      <tr><td>Adjudication engine</td><td><span class="status st-live">Built</span></td><td>Reads every utterance, detects quantified offers and concessions, measures each against the relevant party's declared limit, writes the record in-turn.</td></tr>
+      <tr><td>Spoken-number extraction</td><td><span class="status st-live">Built</span></td><td>Reads negotiation speech as people actually speak it. Nineteen of nineteen test cases pass, including three real defects found and fixed during development.</td></tr>
+      <tr><td>Scoring model</td><td><span class="status st-live">Built</span></td><td>Five weighted axes scoring the human, plus a sixth measuring whether the replica stayed true to its own profile.</td></tr>
+      <tr><td>Counterfactual engine</td><td><span class="status st-live">Built</span></td><td>Replays the identical scenario against the identical profile with an optimal line, at zero cost, and reports the difference.</td></tr>
+      <tr><td>Database design</td><td><span class="status st-live">Built</span></td><td>Sessions, evidentiary record, reports, access control, and a longitudinal view for tracking improvement across a cohort.</td></tr>
+      <tr><td>Security services</td><td><span class="status st-live">Built</span></td><td>Credential broker keeping vendor keys off the browser, plus hard session caps and abandonment teardown so an idle session cannot bill indefinitely.</td></tr>
+      <tr><td>Merge into live app</td><td><span class="status st-next">Next</span></td><td>The reference implementation runs alongside the product rather than inside it. This is the first work item.</td></tr>
+      <tr><td>Live video latency test</td><td><span class="status st-gate">Open</span></td><td>The architecture assumes replies stay under roughly 1.2 seconds. That has not yet been measured in production and it is the first number to establish.</td></tr>
+    </tbody>
+  </table>
+  <p>A note on the three extraction defects, because they illustrate the standard applied. Negotiators speak numbers messily. "Four ninety a box" means four dollars ninety. An early version read it as ninety-four. Another merged two sentences and read a figure as sixty-six point six. A third matched a short word inside a longer one. None of these produce an error message. They produce a confident, official-looking report that is wrong, which is worse than a crash. All three are now permanently pinned by tests.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 03</span>What the product actually produces</h2>
+  <p class="lede">Every figure on this page is real output from the implementation running a fifty-two week supply negotiation against a deliberately hostile procurement profile.</p>
+
+  <figure class="panel">
+    <div class="legend">
+      <span><i style="background:#0B62C4"></i>Trainee</span>
+      <span><i style="background:#EF4343"></i>Counterparty</span>
+      <span><i class="dash"></i>Optimal line</span>
+      <span><i style="background:transparent;border-top:2px dashed #C8102E;height:0;border-radius:0"></i>Trainee's own floor</span>
+    </div>
+    <svg viewBox="0 0 760 300" role="img" aria-label="Price per box across nine turns. The trainee opens at 4.90 and declines to 3.90, crossing their own declared floor of 4.00. The counterparty rises from 3.60 to 4.00. An optimal line holds at 4.90 and closes at 4.35.">
+      <g font-family="JetBrains Mono,monospace" font-size="10" fill="#6B7789">
+        <line x1="64" y1="268" x2="654" y2="268" stroke="#DCE2EA"/>
+        <line x1="64" y1="208" x2="654" y2="208" stroke="#DCE2EA"/>
+        <line x1="64" y1="148" x2="654" y2="148" stroke="#DCE2EA"/>
+        <line x1="64" y1="88"  x2="654" y2="88"  stroke="#DCE2EA"/>
+        <line x1="64" y1="28"  x2="654" y2="28"  stroke="#DCE2EA"/>
+        <text x="56" y="271" text-anchor="end">3.40</text>
+        <text x="56" y="211" text-anchor="end">3.80</text>
+        <text x="56" y="151" text-anchor="end">4.20</text>
+        <text x="56" y="91"  text-anchor="end">4.60</text>
+        <text x="56" y="31"  text-anchor="end">5.00</text>
+        <text x="64" y="290">turn 1</text><text x="211.5" y="290">3</text><text x="359" y="290">5</text>
+        <text x="506.5" y="290">7</text><text x="640" y="290">9</text>
+        <text x="10" y="16" fill="#3C4757">USD / box</text>
+      </g>
+      <line x1="64" y1="178" x2="654" y2="178" stroke="#C8102E" stroke-width="1.2" stroke-dasharray="6 4"/>
+      <polyline points="64,43 137.75,43 211.5,43 285.25,43 359,43 432.75,43 506.5,88 580.25,88 654,125.5"
+                fill="none" stroke="#0A6B4B" stroke-width="2" stroke-dasharray="7 4"/>
+      <polyline points="137.75,238 211.5,238 285.25,238 359,238 432.75,208 506.5,208 580.25,178 654,178"
+                fill="none" stroke="#EF4343" stroke-width="2"/>
+      <polyline points="64,43 137.75,43 211.5,73 285.25,73 359,118 432.75,118 506.5,148 580.25,148 654,193"
+                fill="none" stroke="#0B62C4" stroke-width="2"/>
+      <g stroke="#FFFFFF" stroke-width="2">
+        <circle cx="654" cy="125.5" r="4.5" fill="#0A6B4B"/>
+        <circle cx="654" cy="178" r="4.5" fill="#EF4343"/>
+        <circle cx="654" cy="193" r="4.5" fill="#0B62C4"/>
+      </g>
+      <g font-family="JetBrains Mono,monospace" font-size="11" font-weight="500">
+        <text x="666" y="129" fill="#0A6B4B">4.35</text>
+        <text x="666" y="176" fill="#EF4343">4.00</text>
+        <text x="666" y="199" fill="#0B62C4">3.90</text>
+      </g>
+    </svg>
+    <figcaption>The trainee anchored well, then conceded twenty to thirty cents per box every other turn. An optimal line against the same counterparty held for six turns, traded once, and closed forty-five cents higher.</figcaption>
+  </figure>
+
+  <div class="pull">
+    <div class="fig">3.90<span>trainee closed at</span></div>
+    <div class="fig" style="color:var(--ink)">4.00<span>already on the table</span></div>
+    <p>At turn eight the counterparty offered four dollars per box. At turn nine the trainee proposed three ninety to close. They accepted worse than the standing offer, and crossed the floor their own mandate had set, to do it. No post-session summary catches that. A turn-indexed record catches it automatically, with both quotations attached.</p>
+  </div>
+
+  <h3>Five axes score the person. A sixth scores our own system.</h3>
+  <table>
+    <thead><tr><th>Axis</th><th>Weight</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Red-line integrity</td><td class="num">30%</td><td class="num">60</td></tr>
+      <tr><td>Concession discipline</td><td class="num">25%</td><td class="num">28</td></tr>
+      <tr><td>Anchor discipline</td><td class="num">15%</td><td class="num">65</td></tr>
+      <tr><td>Information ratio</td><td class="num">15%</td><td class="num">0</td></tr>
+      <tr><td>Pressure composure</td><td class="num">15%</td><td class="num">0</td></tr>
+      <tr><td><em>Behavioural adherence of the replica</em></td><td class="num">not scored</td><td class="num">77</td></tr>
+    </tbody>
+  </table>
+  <p>Composite thirty-five out of one hundred, capped because an absolute limit was breached. The sixth row is deliberately excluded from the score: it measures whether our replica stayed true to its profile. If it drifted, the rehearsal happened against a counterparty that does not exist and the participant's result is void. Publishing our own failure rate is unusual, and it is what makes the rest of the report defensible under scrutiny.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 04</span>The capability competitors cannot reproduce</h2>
+  <p class="lede">Anyone can film a negotiation. Only a system holding both an autonomous engine and a deterministic behavioural profile can show what should have been played instead.</p>
+  <div class="pull" style="border-left-color:#0A6B4B">
+    <div class="fig" style="color:#0A6B4B">0.45<span>USD / box forgone</span></div>
+    <div class="fig" style="color:var(--ink)">turn 3<span>where it began</span></div>
+    <p>An optimal line against the same counterparty closed at four thirty-five. The two diverged at turn three, where the trainee conceded and the optimal line held and asked for reciprocity instead. On two thousand four hundred tonnes at 18.14 kilograms per box, that is roughly 132,300 boxes and approximately 59,500 US dollars on one contract, scaling linearly with volume. The comparison run costs nothing to produce.</p>
+  </div>
+  <p>Roleplay vendors have practice without a behavioural engine. Video vendors have rendering without behaviour. Producing that paragraph requires both, and the autonomous engine that makes it possible was already built for a different purpose.</p>
+</section>
+
+<section>
+  <h2><span class="n">Section 05</span>The commercial design</h2>
+  <p class="lede">A ninety-day paid pilot with one committed metric, measured against the customer's own numbers.</p>
+  <p><strong>The metric:</strong> the rate at which the customer's team breaches limits it declared in advance, reported with the currency value of those breaches. The customer sets the limits. We measure against them. That removes the obvious objection, which is that a vendor is marking its own homework.</p>
+  <p><strong>The commitment:</strong> baseline in two weeks, breach rate halved within ninety days. If it does not move, we extend at no cost or refund. The commitment is void if the team's agreement rate falls, so the metric cannot be improved by simply refusing to close.</p>
+  <p><strong>What we refuse to commit to:</strong> margin on closed deals. In ninety days a price movement cannot be separated from market conditions, product mix or counterparty turnover. If it moves the wrong way for unrelated reasons we lose the account, and if it moves the right way we still cannot prove it was us. Accepting an unattributable metric is how pilots die, and declining the flattering number is more credible than accepting it.</p>
+
+  <h3>Unit economics</h3>
+  <table>
+    <thead><tr><th>Session type</th><th>Duration</th><th>Cost</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Text rehearsal</td><td class="num">unbounded</td><td class="num" style="color:#0A6B4B">$0.00</td><td>Pure inference. The default.</td></tr>
+      <tr><td>Counterfactual run</td><td class="num">~4 min</td><td class="num" style="color:#0A6B4B">$0.00</td><td>The benchmark that gives the score meaning.</td></tr>
+      <tr><td>Replica vs replica</td><td class="num">~4 min</td><td class="num">$2.80</td><td>Observation mode.</td></tr>
+      <tr><td>Human sparring, video</td><td class="num">12&ndash;20 min</td><td class="num" style="color:#C8102E">$8.40&ndash;$14.00</td><td>Thinking time bills. The certification run only.</td></tr>
+    </tbody>
+  </table>
+  <p>Everything that makes the product defensible functions before a single GPU minute is purchased. Video is the upsell, not the proof. Commercially this means seats are sold for the report and video minutes are metered separately, so gross margin never depends on how long a participant likes to think.</p>
+</section>
+
+<section class="brk">
+  <h2><span class="n">Section 06</span>What is being asked for</h2>
+  <p class="lede">The constraint is not engineering capacity and it is not the product. It is access to one decision owner.</p>
+  <p>The next milestone is a single complete report generated from a real rehearsal with a real team. It runs in text, so it costs nothing to deliver. That report is what converts the ninety-day pilot from a proposal into a demonstration.</p>
+
+  <h3>Either of these moves immediately</h3>
+  <ul class="plain">
+    <li><b>One named introduction, on success.</b> Three to five organisations where you already hold a warm relationship with the decision owner. We take it from there and agree a success fee on the pilot and on the first year of seats.</li>
+    <li><b>One room.</b> We run a live session at no cost for a group of founders or executives. One participant negotiates against a replica of a hard counterparty in front of the room, and everyone sees the scored report afterwards. You get programming that cannot be sourced elsewhere. Nothing changes hands.</li>
+  </ul>
+
+  <h3>What is not being sought</h3>
+  <p>A monthly business-development retainer, outbound lead generation, or funded prospect research. Not as a judgment on those services, but because of sequence. Until the first report exists, an intermediary is selling a concept, and in a category with a small number of correct buyers a half-formed approach closes those doors for a year. The first customers are founder-led by design, because they are how the product gets defined.</p>
+  <p>The value of a connector is the relationship already held. That is what we are asking for, and we are willing to pay for it on results.</p>
+
+  <p class="foot">Technical statements verified against the reference implementation: typecheck clean, nineteen of nineteen extraction cases passing, full negotiation session executed end to end. Figures in Section 03 and 04 are real output from that session, not illustrative. Santiago Maspons, September 2026.</p>
+</section>
+
+</body></html>
