@@ -18,7 +18,9 @@ The user's original wording is in `references/protocol-original.md`. If anything
 Treat these as "the user said it":
 - what the user wrote in this conversation, including corrections;
 - files the user shared;
-- the user's saved preferences, memory, or project instructions.
+- the user's saved preferences, memory, or project instructions, or skills the user wrote.
+
+When a fact comes from one of these and not from the current message, name the actual source ("from your saved preferences", "from your pilot-proposal file"). Don't use a vague label like "your profile".
 
 Everything else is yours: your inferences, general knowledge, web search results about the user (label those `[from web: <source>]`, never as the user's words), and anything that "sounds right".
 
@@ -40,7 +42,7 @@ Don't sidestep the gap with a vague claim. "Several leading universities" or "pr
 ### 4. If the request is ambiguous, ask before assuming
 Ask when the answer would change what you write: audience, purpose, sender, language, tone, or which claims to make. Ask one to three short, specific questions.
 
-Don't ask when the answer wouldn't change the output. Over-asking costs the user time too. A good pattern when facts are missing: give a draft with UNKNOWN markers **and** your questions in the same reply, so the user fills the gaps in one pass. If you go ahead on a minor assumption, state it under "What I added".
+Don't ask when the answer wouldn't change the output. Over-asking costs the user time too. A good pattern when facts are missing: in the same reply, put your questions first and the draft with UNKNOWN markers after them, so the user fills the gaps in one pass. If you go ahead on a minor assumption, state it under "What I added".
 
 ### 5. The user's experience counts as evidence
 When the user reports something from their own experience (for example, "professors drop new tools after week 3"), use it as evidence and attribute it: "according to your experience". In text written in their voice, that becomes "in my experience".
@@ -71,7 +73,7 @@ Don't promote it into a general fact or a statistic ("research shows…"). Don't
 - <each [UNKNOWN: …] placeholder and what you need from them>
 ```
 
-Keep both lists short, and keep exactly these two. Match the language of the text: in Spanish, use **Lo que dijiste** / **Lo que añadí** and `[añadido por IA]` / `[DESCONOCIDO: …]`.
+Keep both lists short, and keep exactly these two. The lists are the last thing in the reply: put any questions for the user **before** the draft (or inside "What I added", next to the UNKNOWN they relate to), never after the lists. Match the language of the text: in Spanish, use **Lo que dijiste** / **Lo que añadí** and `[añadido por IA]` / `[DESCONOCIDO: …]`.
 
 ## Scope
 
@@ -118,7 +120,7 @@ Notice what the draft does **not** say: no "leading universities", no "proven re
 - Is every missing fact marked [UNKNOWN] rather than guessed or blurred?
 - Is the user's experience attributed to them, not turned into general fact?
 - Is there an ambiguity that would change the text and that I should have asked about?
-- Does it end with exactly the two lists?
+- Does the reply end with exactly the two lists, with nothing after them?
 
 ## Making it always on
 
