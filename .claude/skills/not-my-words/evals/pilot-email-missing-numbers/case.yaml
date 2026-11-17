@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: pilot-email-missing-numbers
+expected_outcome: |
+  An email that marks the student count and results as UNKNOWN (no invented figures or vague claims), flags AI-added claims, and ends with the What you said / What I added lists.
